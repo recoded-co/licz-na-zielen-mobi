@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <title>Licz na zieleń! Fundacja Sendzimira 2013</title>
+        <script type="text/javascript">
+            var server_addr = 'http://192.168.1.12:8000';
+            var slug = 'test-1';
+            var markers_data = '';
+        </script>
+        <!-- openlayers -->
+        <link rel="stylesheet" href="css/jquery.mobile-1.0.min.css">
+        <script type="text/javascript" src="js/jquery-1.6.4.min.js"></script>
+        <script type="text/javascript" src="js/jquery.mobile-1.0.1.min.js"></script>
+        <link rel="stylesheet" href="css/theme/default/style.mobile.css" type="text/css">
+        <link rel="stylesheet" href="css/style.mobile-jq.css" type="text/css">
+        <!--<script type="text/javascript" src="js/OpenLayers.mobile.js"></script>-->
+        <script type="text/javascript" src="js/OpenLayers.js"></script>
+        <script type="text/javascript" src="js/mobile-base.js"></script>
+        <script type="text/javascript" src="js/mobile-jq.js"></script>
+        <script type="text/javascript" src="js/api.js"></script>
+        <script type="text/javascript" src="js/licznazielen.js"></script>
+        <!-- openlayers end -->
+        <script type="text/javascript">
+            var markers_listener = function(data){
+                markers_data=data;
+            }
+        </script>
+        <script type="text/javascript" src="http://192.168.1.12:8000/geocache/jsonp?callback=markers_listener&slug=test-1"></script>
+    </head>
+    <body>
+        <!-- openlayers start -->
+        <h1 id="title">Licz na zielen! Fundacja Sendzimira 2013</h1>
+        <div id="tags">
+          mobile, jquery
+        </div>
+        <p id="shortdesc">
+          Aplikacja wspomagająca partycypację w monitorowaniu i planowaniu zieleni w mieście.
+        </p>
+
+        <div data-role="page" id="mappage">
+          <div data-role="content">
+            <div id="map"></div>
+          </div>
+
+          <div data-role="footer">
+            <a onclick="getMarkers();" href="#" data-icon="download" data-role="button">Pobierz punkty</a>
+            <!--<a href="#searchpage" data-icon="search" data-role="button">Search</a>
+            <a href="#" id="locate" data-icon="locate" data-role="button">Locate</a>-->
+            <a href="#layerspage" data-icon="layers" data-role="button">Layers</a>
+          </div>
+          <div id="navigation" data-role="controlgroup" data-type="vertical">
+            <a href="#" data-role="button" data-icon="plus" id="plus"
+               data-iconpos="notext"></a>
+            <a href="#" data-role="button" data-icon="minus" id="minus"
+               data-iconpos="notext"></a>
+          </div>
+        </div>
+
+        <div data-role="page" id="searchpage">
+          <div data-role="header">
+            <h1>Search</h1>
+          </div>
+          <div data-role="fieldcontain">
+            <input type="search" name="query" id="query"
+                   value="" placeholder="Search for places"
+                   autocomplete="off"/>
+          </div>
+          <ul data-role="listview" data-inset="true" id="search_results"></ul>
+        </div>
+        <div data-role="page" id="layerspage">
+          <div data-role="header">
+            <h1>Layers</h1>
+          </div>
+          <div data-role="content">
+            <ul data-role="listview" data-inset="true" data-theme="d" data-dividertheme="c" id="layerslist">
+            </ul>
+          </div>
+        </div>
+
+        <div id="popup" data-role="dialog">
+            <div data-position="inline" data-theme="d" data-role="header">
+                <h1>Details</h1>
+            </div>
+            <div data-theme="c" data-role="content">
+                <ul id="details-list" data-role="listview">
+                </ul>
+            </div>
+        </div>
+        <!-- openlayers end -->
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript" src="js/map.js"></script>
+        <script type="text/javascript">
+            app.initialize();
+        </script>
+    </body>
+</html>
