@@ -1,102 +1,168 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8" />
-        <meta name="format-detection" content="telephone=no" />
-        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
-        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
-        <link rel="stylesheet" type="text/css" href="css/index.css" />
-        <title>Licz na zieleń! Fundacja Sendzimira 2013</title>
-        <script type="text/javascript">
-            var server_addr = 'http://192.168.1.12:8000';
-            var slug = 'test-1';
-            var markers_data = '';
-        </script>
-        <!-- openlayers -->
-        <link rel="stylesheet" href="css/jquery.mobile-1.0.min.css">
-        <script type="text/javascript" src="js/jquery-1.6.4.min.js"></script>
-        <script type="text/javascript" src="js/jquery.mobile-1.0.1.min.js"></script>
-        <link rel="stylesheet" href="css/theme/default/style.mobile.css" type="text/css">
-        <link rel="stylesheet" href="css/style.mobile-jq.css" type="text/css">
-        <!--<script type="text/javascript" src="js/OpenLayers.mobile.js"></script>-->
-        <script type="text/javascript" src="js/OpenLayers.js"></script>
-        <script type="text/javascript" src="js/mobile-base.js"></script>
-        <script type="text/javascript" src="js/mobile-jq.js"></script>
-        <script type="text/javascript" src="js/api.js"></script>
-        <script type="text/javascript" src="js/licznazielen.js"></script>
-        <!-- openlayers end -->
-        <script type="text/javascript">
-            var markers_listener = function(data){
-                markers_data=data;
+<head>
+    <title>The map</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="stylesheet" href="css/leaflet.css" />
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="../../assets/js/html5shiv.js"></script>
+      <script src="../../assets/js/respond.min.js"></script>
+    <![endif]-->
+
+    <style>
+        body {
+            padding-top: 50px;
+            padding-bottom: 40px;
+            margin: 0;
+        }
+        html, body, #map {
+            height: 100%;
+            width: 100%;
+        }
+
+        #buttons{
+            display:none;
+            text-align: center;
+            background-color: black;
+           /* height: 100%;*/
+            padding-top: 2px;
+        }
+    </style>
+    <script>
+        var server_addr = 'http://alfa.licznazielen.pl';
+        var slug = 'test-1';
+        var layers = {};
+        var map;
+
+
+        var init = function(){
+
+            map = L.map('map').setView([52.399, 16.900], 10);
+            //map.locate({setView: true, maxZoom: 16});
+
+            L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {
+        			maxZoom: 18,
+		        	attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'
+    		}).addTo(map);
+
+            $('#progress').addClass('active');
+            $('#progress').show();
+        }
+
+        var showMarkers = function(name){
+            console.log('1');
+            for (var key in layers){
+                map.removeLayer(layers[key]);
             }
-        </script>
-        <script type="text/javascript" src="http://192.168.1.12:8000/geocache/jsonp?callback=markers_listener&slug=test-1"></script>
-    </head>
-    <body>
-        <!-- openlayers start -->
-        <h1 id="title">Licz na zielen! Fundacja Sendzimira 2013</h1>
-        <div id="tags">
-          mobile, jquery
-        </div>
-        <p id="shortdesc">
-          Aplikacja wspomagająca partycypację w monitorowaniu i planowaniu zieleni w mieście.
-        </p>
+            console.log('2');
+            var markersToAdd = layers;
+            if (name != undefined && name != ''){
+                markersToAdd = {};
+                markersToAdd[name]=layers[name];
+            }
+            console.log('3');
+            for (var m in markersToAdd){
+                var markers = layers[m];
+                markers.addTo(map);
+            }
+            console.log('4');
+        }
 
-        <div data-role="page" id="mappage">
-          <div data-role="content">
-            <div id="map"></div>
-          </div>
+        var resize = function(body){
+          //  $('#map').height = window.innerHeight;
+          //  $('#map').resize();
+        }
+        var markers_listener = function(data){
+            var LeafIcon = L.Icon.extend({
+                options: {
+                    shadowUrl: './js/images/marker-shadow.png'
+                }
+		    });
 
-          <div data-role="footer">
-            <a onclick="getMarkers();" href="#" data-icon="download" data-role="button">Pobierz punkty</a>
-            <!--<a href="#searchpage" data-icon="search" data-role="button">Search</a>
-            <a href="#" id="locate" data-icon="locate" data-role="button">Locate</a>-->
-            <a href="#layerspage" data-icon="layers" data-role="button">Layers</a>
-          </div>
-          <div id="navigation" data-role="controlgroup" data-type="vertical">
-            <a href="#" data-role="button" data-icon="plus" id="plus"
-               data-iconpos="notext"></a>
-            <a href="#" data-role="button" data-icon="minus" id="minus"
-               data-iconpos="notext"></a>
-          </div>
-        </div>
+		    var greenIcon = new LeafIcon({iconUrl: './js/images/marker.png'});
 
-        <div data-role="page" id="searchpage">
-          <div data-role="header">
-            <h1>Search</h1>
-          </div>
-          <div data-role="fieldcontain">
-            <input type="search" name="query" id="query"
-                   value="" placeholder="Search for places"
-                   autocomplete="off"/>
-          </div>
-          <ul data-role="listview" data-inset="true" id="search_results"></ul>
-        </div>
-        <div data-role="page" id="layerspage">
-          <div data-role="header">
-            <h1>Layers</h1>
-          </div>
-          <div data-role="content">
-            <ul data-role="listview" data-inset="true" data-theme="d" data-dividertheme="c" id="layerslist">
-            </ul>
-          </div>
-        </div>
 
-        <div id="popup" data-role="dialog">
-            <div data-position="inline" data-theme="d" data-role="header">
-                <h1>Details</h1>
+            var marker_arrays = {};
+
+            for (var i in data){
+                console.log(data);
+                var markerData = data[i];
+                var layerName = markerData.type;
+
+                if (layerName in marker_arrays){
+                    //pass
+                }else{
+                    console.log('new array for '+layerName);
+                    marker_arrays[layerName] = [];
+                }
+                var layer = marker_arrays[layerName];
+
+                var wkt = new Wkt.Wkt();
+                wkt.read(markerData.geometry);
+                wkt.write();
+                var o = wkt.toObject();
+                var latlng = o.getLatLng();
+                var correct_latlng =  proj4('EPSG:3857', 'EPSG:4326', [latlng.lng, latlng.lat]);
+
+                var m = L.marker([correct_latlng[1], correct_latlng[0]], {icon: greenIcon});
+                m.bindPopup("Type: "+layerName+" ("+markerData.id+")");
+                layer.push(m);
+            }
+
+            for (var key in marker_arrays){
+                layers[key] = L.featureGroup(marker_arrays[key]);
+            }
+
+            $('#progress').removeClass('active');
+            $('#progress').remove();
+            $('#buttons').fadeIn(1000);
+        }
+    </script>
+
+</head>
+<body onLoad='init();' onResize="resize(this);">
+
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">LiczNaZielen</a>
+        </div>
+      </div>
+
+    </div>
+    <div id="buttons">
+        <button id="miejsce-pozytywne" type="button" class="btn btn-primary" onClick="showMarkers(this.id);">Pozytywne</button>
+        <button id="miejsce-negatywne" type="button" class="btn btn-danger" onClick="showMarkers(this.id);">Negatywne</button>
+        <button id="" type="button" class="btn btn-default" onClick="showMarkers(this.id);">Wszystkie</button>
+    </div>
+    <div id="map"></div>
+
+
+
+    <div id="progress" style="display:none; center;" >
+        <div class="progress progress-striped">
+            <div class="progress-bar"
+                    role="progressbar"
+                    aria-valuenow="0"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                    style="width: 100%">
+                <span class="sr-only">0% Complete</span>
             </div>
-            <div data-theme="c" data-role="content">
-                <ul id="details-list" data-role="listview">
-                </ul>
-            </div>
         </div>
-        <!-- openlayers end -->
-        <script type="text/javascript" src="cordova.js"></script>
-        <script type="text/javascript" src="js/index.js"></script>
-        <script type="text/javascript" src="js/map.js"></script>
-        <script type="text/javascript">
-            app.initialize();
-        </script>
-    </body>
+    </div>
+
+
+    <script src="js/leaflet.js"></script>
+    <script src="js/wicket.js"></script>
+    <script src="js/wicket-leaflet.js"></script>
+    <script src="js/proj4.js"></script>
+    <script src="js/jquery.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="http://alfa.licznazielen.pl/geocache/jsonp?callback=markers_listener&slug=start"></script>
+</body>
 </html>
