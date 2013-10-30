@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>The map</title>
+    <title>Licz na zieleń!</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <link rel="stylesheet" href="css/leaflet.css" />
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/bootstrap-theme.min.css">
-
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
       <script src="../../assets/js/html5shiv.js"></script>
@@ -28,21 +27,21 @@
             display:none;
             text-align: center;
             background-color: black;
-           /* height: 100%;*/
             padding-top: 2px;
         }
     </style>
     <script>
         var server_addr = 'http://alfa.licznazielen.pl';
         var slug = 'test-1';
+        var map_center = [52.399, 16.900];
+        var map_zoom = 10;
         var layers = {};
         var map;
 
 
         var init = function(){
 
-            map = L.map('map').setView([52.399, 16.900], 10);
-            //map.locate({setView: true, maxZoom: 16});
+            map = L.map('map').setView(map_center, map_zoom);
 
             L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {
         			maxZoom: 18,
@@ -54,28 +53,20 @@
         }
 
         var showMarkers = function(name){
-            console.log('1');
             for (var key in layers){
                 map.removeLayer(layers[key]);
             }
-            console.log('2');
             var markersToAdd = layers;
             if (name != undefined && name != ''){
                 markersToAdd = {};
                 markersToAdd[name]=layers[name];
             }
-            console.log('3');
             for (var m in markersToAdd){
                 var markers = layers[m];
                 markers.addTo(map);
             }
-            console.log('4');
         }
 
-        var resize = function(body){
-          //  $('#map').height = window.innerHeight;
-          //  $('#map').resize();
-        }
         var markers_listener = function(data){
             var LeafIcon = L.Icon.extend({
                 options: {
@@ -89,16 +80,15 @@
             var marker_arrays = {};
 
             for (var i in data){
-                console.log(data);
                 var markerData = data[i];
                 var layerName = markerData.type;
 
                 if (layerName in marker_arrays){
                     //pass
                 }else{
-                    console.log('new array for '+layerName);
                     marker_arrays[layerName] = [];
                 }
+
                 var layer = marker_arrays[layerName];
 
                 var wkt = new Wkt.Wkt();
@@ -113,8 +103,12 @@
                 layer.push(m);
             }
 
+            $('#menu').html("");
             for (var key in marker_arrays){
                 layers[key] = L.featureGroup(marker_arrays[key]);
+                $('#menu').append(
+                    "<li><a id='"+key+"' onClick='showMarkers(this.id);' href='#'>"+key+"</a></li>"
+                );
             }
 
             $('#progress').removeClass('active');
@@ -124,21 +118,31 @@
     </script>
 
 </head>
-<body onLoad='init();' onResize="resize(this);">
+<body onLoad='init();'>
 
-    <div class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
         <div class="navbar-header">
-          <a class="navbar-brand" href="#">LiczNaZielen</a>
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">LiczNaZieleń</a>
         </div>
-      </div>
 
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul id='menu' class="nav navbar-nav navbar-right">
+                <li><a href="#">Pobieram dane...</a></li>
+            <!--
+                <li><a id="miejsce-pozytywne" onClick="showMarkers(this.id);" href="#">Pozytywne</a></li>
+                <li><a id="miejsce-negatywne" onClick="showMarkers(this.id);" href="#">Negatywne</a></li>
+                <li><a id="" onClick="showMarkers(this.id);" href="#">Wszystkie</a></li>
+            -->
+            </ul>
+        </div>
     </div>
-    <div id="buttons">
-        <button id="miejsce-pozytywne" type="button" class="btn btn-primary" onClick="showMarkers(this.id);">Pozytywne</button>
-        <button id="miejsce-negatywne" type="button" class="btn btn-danger" onClick="showMarkers(this.id);">Negatywne</button>
-        <button id="" type="button" class="btn btn-default" onClick="showMarkers(this.id);">Wszystkie</button>
-    </div>
+
     <div id="map"></div>
 
 
