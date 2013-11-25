@@ -1,8 +1,10 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="pl" lang="pl">
 <head>
-    <title>Licz na zieleń!</title>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8" /> 
+	<title>Licz na zieleń!</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+	<link rel="stylesheet" href="css/app.css" />
     <link rel="stylesheet" href="css/leaflet.css" />
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/bootstrap-theme.min.css">
@@ -31,95 +33,14 @@
             padding-top: 2px;
         }
     </style>
-    <script>
-        var server_addr = 'http://alfa.licznazielen.pl';
-        var slug = 'test-1';
-        var map_center = [52.399, 16.900];
-        var map_zoom = 10;
-        var layers = {};
-        var map;
-
-
-        var init = function(){
-
-            map = L.map('map').setView(map_center, map_zoom);
-
-            L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {
-        			maxZoom: 18,
-		        	attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'
-    		}).addTo(map);
-
-            $('#progress').addClass('active');
-            $('#progress').show();
-        }
-
-        var showMarkers = function(name){
-            for (var key in layers){
-                map.removeLayer(layers[key]);
-            }
-            var markersToAdd = layers;
-            if (name != undefined && name != ''){
-                markersToAdd = {};
-                markersToAdd[name]=layers[name];
-            }
-            for (var m in markersToAdd){
-                var markers = layers[m];
-                markers.addTo(map);
-            }
-        }
-
-        var markers_listener = function(data){
-            var LeafIcon = L.Icon.extend({
-                options: {
-                    shadowUrl: './js/images/marker-shadow.png'
-                }
-		    });
-
-		    var greenIcon = new LeafIcon({iconUrl: './js/images/marker.png'});
-
-
-            var marker_arrays = {};
-
-            for (var i in data){
-                var markerData = data[i];
-                var layerName = markerData.type;
-
-                if (layerName in marker_arrays){
-                    //pass
-                }else{
-                    marker_arrays[layerName] = [];
-                }
-
-                var layer = marker_arrays[layerName];
-
-                var wkt = new Wkt.Wkt();
-                wkt.read(markerData.geometry);
-                wkt.write();
-                var o = wkt.toObject();
-                var latlng = o.getLatLng();
-                var correct_latlng =  proj4('EPSG:3857', 'EPSG:4326', [latlng.lng, latlng.lat]);
-
-                var m = L.marker([correct_latlng[1], correct_latlng[0]], {icon: greenIcon});
-                m.bindPopup("Type: "+layerName+" ("+markerData.id+")");
-                layer.push(m);
-            }
-
-            $('#menu').html("");
-            for (var key in marker_arrays){
-                layers[key] = L.featureGroup(marker_arrays[key]);
-                $('#menu').append(
-                    "<li><a id='"+key+"' onClick='showMarkers(this.id);' href='#'>"+key+"</a></li>"
-                );
-            }
-
-            $('#progress').removeClass('active');
-            $('#progress').remove();
-            $('#buttons').fadeIn(1000);
-        }
-    </script>
+     <script data-main="js/app.js" src="js/require.js"></script>
 
 </head>
-<body onLoad='init();'>
+<body>
+
+	<div id="splashscreen">
+		Splash!&nbsp;
+	</div>
 
     <div class="navbar navbar-default navbar-fixed-top" role="navigation">
         <div class="navbar-header">
@@ -161,13 +82,5 @@
         </div>
     </div>
 
-
-    <script src="js/leaflet.js"></script>
-    <script src="js/wicket.js"></script>
-    <script src="js/wicket-leaflet.js"></script>
-    <script src="js/proj4.js"></script>
-    <script src="js/jquery.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="http://alfa.licznazielen.pl/geocache/jsonp?callback=markers_listener&slug=start"></script>
 </body>
 </html>
