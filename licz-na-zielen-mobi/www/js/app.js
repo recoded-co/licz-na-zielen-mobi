@@ -5,25 +5,27 @@ requirejs.config({
     }
 });
 
+var greenIcon;
+var map;
+var center;
 
 requirejs(['jquery','leaflet','app/android'],
 function   ($,lf,mb) {
     
 	
-	var greenIcon = L.icon({
+	greenIcon = L.icon({
 		iconUrl: 'images/marker.png',
 		shadowUrl: 'images/marker-shadow.png',
-
-		iconSize:     [25, 41], // size of the icon
-		shadowSize:   [41, 41], // size of the shadow
-		iconAnchor:   [0, 0], // point of the icon which will correspond to marker's location
-		shadowAnchor: [0, 0],  // the same for the shadow
-		popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+		iconSize:     [25, 41],
+		shadowSize:   [41, 41],
+		iconAnchor:   [0, 0],
+		shadowAnchor: [0, 0],
+		popupAnchor:  [12, 0]
 	});
 	
 	var device=new MobileDevice();	
 	
-	var map = L.map('map', {
+	map = L.map('map', {
 		center: device.getLocation(),
 		zoom: 20
 	});
@@ -34,30 +36,22 @@ function   ($,lf,mb) {
 			attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'
 	}).addTo(map);
 	
-	if(!device.isLocationEnable())
-	//	map.locate({setView: true, maxZoom: 16});
-	{
-		
-		if (navigator.geolocation)
-		{
-			navigator.geolocation.getCurrentPosition(function(position)
-			{
-				map.setView([position.coords.latitude, position.coords.longitude], 20);
-				L.marker([position.coords.latitude, position.coords.longitude],{icon: greenIcon}).addTo(map);
-				$('#splashscreen').hide();
-			},
-			function(err)
-			{				
-				
-			}
-			);
-		}else{
-			
-		}
-		
-		
-	}
 	
-	
+	device.EmulateLocation(InitApp);	
 	
 });
+
+function centerMap(m)
+{
+	map.setView([center[0], center[1]], 20);
+}
+
+function InitApp(latitude,longitude)
+{
+	map.setView([latitude, longitude], 20);
+	
+	center = [latitude, longitude];
+	
+	L.marker([latitude, longitude],{icon: greenIcon}).addTo(map).bindPopup("Jeste≈õ <b>tutaj</b>.").openPopup();
+	$('#splashscreen').hide();
+}

@@ -194,32 +194,49 @@
 	}
 
 
+.leaflet-bar a:focus
+{
+	outline:none;
+	text-decoration:none;
+	color:#fff;
+}
+	
 /* general toolbar styles */
 
 .leaflet-bar {
-	box-shadow: 0 1px 7px rgba(0,0,0,0.65);
 	-webkit-border-radius: 4px;
 	        border-radius: 4px;
 	}
 .leaflet-bar a, .leaflet-bar a:hover {
-	background-color: #fff;
-	border-bottom: 1px solid #ccc;
 	width: 26px;
 	height: 26px;
 	line-height: 26px;
 	display: block;
 	text-align: center;
 	text-decoration: none;
-	color: black;
+	color: #fff;
+	outline:none;
 	}
+	
+.leaflet-control-zoom-in,.leaflet-control-zoom-out,.leaflet-control-zoom-in:hover ,.leaflet-control-zoom-out:hover 
+{
+background-color: #8fbe00;
+	
+}
+	
+.leaflet-control-zoom-center,.leaflet-control-zoom-center:hover
+{
+	background: url('../images/center_ico.png') center center no-repeat,#53cbf5;
+}
+
 .leaflet-bar a,
 .leaflet-control-layers-toggle {
 	background-position: 50% 50%;
 	background-repeat: no-repeat;
 	display: block;
 	}
-.leaflet-bar a:hover {
-	background-color: #f4f4f4;
+.leaflet-bar a:hover {	
+	outline:none;
 	}
 .leaflet-bar a:first-child {
 	-webkit-border-top-left-radius: 4px;
