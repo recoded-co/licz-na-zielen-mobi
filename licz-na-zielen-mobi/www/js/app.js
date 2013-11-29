@@ -1,17 +1,20 @@
-requirejs.config({
+/*requirejs.config({
     baseUrl: 'js/lib',   
     paths: {
         app: '../app'
     }
-});
+});*/
+
 
 var greenIcon;
 var map;
 var center;
+var ggl;
 
-requirejs(['jquery','leaflet','app/android'],
-function   ($,lf,mb) {
-    
+//requirejs(['jquery','leaflet','app/android','Google'],
+//function   ($,lf,mb,gg) {
+
+jQuery(document).ready(function(){
 	
 	greenIcon = L.icon({
 		iconUrl: 'images/marker.png',
@@ -29,15 +32,32 @@ function   ($,lf,mb) {
 		center: device.getLocation(),
 		zoom: 20
 	});
-
 	
-	L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {
+	var osm = L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {
 			maxZoom: 18,
 			attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'
 	}).addTo(map);
 	
-	
+	try
+	{
+		var ggl = new L.Google();
+		map.addControl(new L.Control.Layers( {'OSM':osm, 'Google':ggl}, {}));
+	}catch(err){
+		alert('Error: '+err.message);
+	}
+		
+		
+	//map.fitBounds(bounds);
+		
 	device.EmulateLocation(InitApp);	
+	
+	jQuery('#menu-btn').click(function()
+	{	
+		if(jQuery('#map').css('left')=='0px')
+			$( "#map" ).animate({ "left": "-90%" }, "slow" );
+		else
+			$( "#map" ).animate({ "left": "0%" }, "slow" );
+	});
 	
 });
 
