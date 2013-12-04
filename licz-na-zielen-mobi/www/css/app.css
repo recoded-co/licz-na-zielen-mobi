@@ -87,19 +87,36 @@ padding:0;
 	top:15%;
 }
 
-#footer
+#footer,#map-footer
 {
 	position:absolute;
 	bottom:20px;
 	width:100%;
+	z-index:1;
 }
 
-#footer > div
+#map-footer
+{
+	height:150px;
+}
+
+#footer > div,#map-footer > div
 {
 	color:#fff;
 	text-align:center;
 	font-size:20px;
 	margin-top:15px;
+}
+
+#find-near-btn
+{
+	max-width:116px;
+	cursor:pointer;
+}
+
+#find-near-btn:hover
+{	
+	max-width:110px;
 }
 
 .nav li

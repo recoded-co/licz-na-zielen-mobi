@@ -6,51 +6,23 @@
 });*/
 
 
-var greenIcon;
 var map;
-var center;
-var ggl;
+var webapi;
+var device;
+var nearObjects;
+var wkt;
 
 //requirejs(['jquery','leaflet','app/android','Google'],
 //function   ($,lf,mb,gg) {
 
 jQuery(document).ready(function(){
 	
-	greenIcon = L.icon({
-		iconUrl: 'images/marker.png',
-		shadowUrl: 'images/marker-shadow.png',
-		iconSize:     [25, 41],
-		shadowSize:   [41, 41],
-		iconAnchor:   [0, 0],
-		shadowAnchor: [0, 0],
-		popupAnchor:  [12, 0]
-	});
+	device=new MobileDevice();	
+	webapi = new WebService();	
+	map = new MapWrapper('map',InitApp);
 	
-	var device=new MobileDevice();	
-	
-	map = L.map('map', {
-		center: device.getLocation(),
-		zoom: 20
-	});
-	
-	var osm = L.tileLayer('http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png', {
-			maxZoom: 18,
-			attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery � <a href="http://cloudmade.com">CloudMade</a>'
-	}).addTo(map);
-	
-	try
-	{
-		var ggl = new L.Google();
-		map.addControl(new L.Control.Layers( {'OSM':osm, 'Google':ggl}, {}));
-	}catch(err){
-		alert('Error: '+err.message);
-	}
-		
-		
 	//map.fitBounds(bounds);
 		
-	device.EmulateLocation(InitApp);	
-	
 	jQuery('#menu-btn').click(function()
 	{	
 		if(jQuery('#map').css('left')=='0px')
@@ -59,19 +31,73 @@ jQuery(document).ready(function(){
 			$( "#map" ).animate({ "left": "0%" }, "slow" );
 	});
 	
+	jQuery('#find-near-btn').click(searchNearObjects);
+	
 });
 
-function centerMap(m)
+function searchNearObjects()
 {
-	map.setView([center[0], center[1]], 20);
+	var near_btn = $(this);
+	
+	if(near_btn.hasClass('image-animation')){
+		return false;
+	}
+	
+	near_btn.addClass('image-animation');
+	
+	setTimeout(function () {
+	
+	var centerPoint = map.getCenterOfMap();		
+		
+	var objectsList = webapi.getNearObjects(centerPoint.lat,centerPoint.lng);
+	
+	map.removeMarkers('near');
+	
+	if(objectsList != false){
+	
+		nearObjects = new Array();
+	
+		jQuery.each(objectsList, function( key, val ) {
+			
+			singleObject = new Array();
+			singleObject['id'] = new Array(val.id,val.feature,val.slug,val.datasetdef.id);
+			singleObject['cache'] = false;
+			singleObject['favorite'] = val.favorite;
+			singleObject['name'] = val.datasetdef.name;
+			
+			wkt = new Wkt.Wkt();
+			
+			wkt.read(val.geometry);
+			
+			map.addMarker('near',map.MARKER_BLUE,wkt.components[0].x,wkt.components[0].y,val.datasetdef.name,false);
+			
+			singleObject['location'] = val.datasetdef.name;
+			nearObjects[val.id] = singleObject;			
+			
+			
+		});
+		
+		map.fitZoom('near',5,centerPoint);
+		
+	}else{
+		alert('error');
+	}
+	
+	near_btn.removeClass('image-animation');
+	
+	
+	},3000);
+	
 }
 
 function InitApp(latitude,longitude)
 {
-	map.setView([latitude, longitude], 20);
-	
-	center = [latitude, longitude];
-	
-	L.marker([latitude, longitude],{icon: greenIcon}).addTo(map).bindPopup("Jesteś <b>tutaj</b>.").openPopup();
+	map.setCenter(latitude,longitude,0);
+	map.addMarker('primary',map.MARKER_BLUE,latitude, longitude,'Jesteś tutaj',true);
 	$('#splashscreen').hide();
+}
+
+function centerMap()
+{
+	map.goToCenter();
 }
