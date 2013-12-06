@@ -21,8 +21,6 @@ jQuery(document).ready(function(){
 	webapi = new WebService();	
 	map = new MapWrapper('map',InitApp);
 	
-	//map.fitBounds(bounds);
-		
 	jQuery('#menu-btn').click(function()
 	{	
 		if(jQuery('#map').css('left')=='0px')
@@ -43,37 +41,37 @@ function searchNearObjects()
 		return false;
 	}
 	
+	var iCounter = 0;
+	
+	var markerColorList = new Array(
+		map.MARKER_BLUE,
+		map.MARKER_PURPLE,
+		map.MARKER_YELLOW,
+		map.MARKER_RED,
+		map.MARKER_GREEN2,
+		map.MARKER_PURPLE2,
+		map.MARKER_GREEN3,
+		map.MARKER_AQUA,
+		map.MARKER_GRAY,
+		map.MARKER_BROWN
+	);
+	
 	near_btn.addClass('image-animation');
 	
 	setTimeout(function () {
 	
 	var centerPoint = map.getCenterOfMap();		
 		
-	var objectsList = webapi.getNearObjects(centerPoint.lat,centerPoint.lng);
+	nearObjects = webapi.getNearObjects(centerPoint.lat,centerPoint.lng);
 	
 	map.removeMarkers('near');
 	
-	if(objectsList != false){
 	
-		nearObjects = new Array();
+	if(nearObjects != false){			
 	
-		jQuery.each(objectsList, function( key, val ) {
+		jQuery.each(nearObjects, function( key, val ) {	
 			
-			singleObject = new Array();
-			singleObject['id'] = new Array(val.id,val.feature,val.slug,val.datasetdef.id);
-			singleObject['cache'] = false;
-			singleObject['favorite'] = val.favorite;
-			singleObject['name'] = val.datasetdef.name;
-			
-			wkt = new Wkt.Wkt();
-			
-			wkt.read(val.geometry);
-			
-			map.addMarker('near',map.MARKER_BLUE,wkt.components[0].x,wkt.components[0].y,val.datasetdef.name,false);
-			
-			singleObject['location'] = val.datasetdef.name;
-			nearObjects[val.id] = singleObject;			
-			
+			map.addMarker('near',markerColorList[iCounter++],val.getLatitude(),val.getLongitude(),val.getName(),false);
 			
 		});
 		
@@ -93,7 +91,7 @@ function searchNearObjects()
 function InitApp(latitude,longitude)
 {
 	map.setCenter(latitude,longitude,0);
-	map.addMarker('primary',map.MARKER_BLUE,latitude, longitude,'Jesteś tutaj',true);
+	map.addMarker('primary',map.MARKER_ORANGE,latitude, longitude,'Jesteś tutaj',true);
 	$('#splashscreen').hide();
 }
 

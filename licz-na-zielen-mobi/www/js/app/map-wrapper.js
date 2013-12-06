@@ -46,27 +46,55 @@ var MapWrapper = (function () {
 		
 		/*custum markers*/		
 		this.MARKER_BLUE = 'blue';
+		this.MARKER_PURPLE = 'purple';
+		this.MARKER_YELLOW = 'yellow';
+		this.MARKER_RED = 'red';
+		this.MARKER_GREEN2 = 'green2';
+		this.MARKER_PURPLE2 = 'purple2';
+		this.MARKER_GREEN3 = 'green3';
+		this.MARKER_AQUA = 'aqua';
+		this.MARKER_GRAY = 'gray';
+		this.MARKER_BROWN = 'brown';
+		this.MARKER_ORANGE = 'orange';
+		this.MARKER_GREEN = 'green';
 		
 		var markers = new Array();
 		
-		markers[this.MARKER_BLUE] = L.icon({
-			iconUrl: 'images/marker.png',
-			shadowUrl: 'images/marker-shadow.png',
-			iconSize:     [25, 41],
-			shadowSize:   [41, 41],
-			iconAnchor:   [0, 0],
-			shadowAnchor: [0, 0],
-			popupAnchor:  [12, 0]
+		var LeafIcon = L.Icon.extend({
+			options: {
+				shadowUrl: 'images/marker-shadow.png',
+				iconSize:     [25, 41],
+				shadowSize:   [41, 41],
+				iconAnchor:   [0, 0],
+				shadowAnchor: [0, 0],
+				popupAnchor:  [12, 0]
+			}
 		});
 		
+		markers[this.MARKER_BLUE] = new LeafIcon({iconUrl: 'images/m1.png'});
+		markers[this.MARKER_PURPLE] = new LeafIcon({iconUrl: 'images/m2.png'});
+		markers[this.MARKER_YELLOW] = new LeafIcon({iconUrl: 'images/m3.png'});
+		markers[this.MARKER_RED] = new LeafIcon({iconUrl: 'images/m4.png'});
+		markers[this.MARKER_GREEN2] = new LeafIcon({iconUrl: 'images/m5.png'});
+		markers[this.MARKER_PURPLE2] = new LeafIcon({iconUrl: 'images/m6.png'});
+		markers[this.MARKER_GREEN3] = new LeafIcon({iconUrl: 'images/m7.png'});
+		markers[this.MARKER_AQUA] = new LeafIcon({iconUrl: 'images/m8.png'});
+		markers[this.MARKER_GRAY] = new LeafIcon({iconUrl: 'images/m9.png'});
+		markers[this.MARKER_BROWN] = new LeafIcon({iconUrl: 'images/m10.png'});
+		markers[this.MARKER_ORANGE] = new LeafIcon({iconUrl: 'images/current_location.png'});
+		markers[this.MARKER_GREEN] = new LeafIcon({iconUrl: 'images/fav.png'});
+		
 		this.fitZoom = function (layer,number,centerPoint) {
+		
+			if(!aMarkerList.hasOwnProperty(layer))
+				return;
 		
 			var iCounter = 0;
 			var iLength = aMarkerList[layer].length;
 			var iNumber = Math.min(iLength,number);
 			
 			var markerst = new Array();			
-						
+			
 			for(i=0;i<iLength;i++)
 			{				
 				markerst[i] = new Array(centerPoint.distanceTo(aMarkerList[layer][i].getLatLng()),aMarkerList[layer][i].getLatLng());			
@@ -114,9 +142,11 @@ var MapWrapper = (function () {
 			
 			for(i=0;i<iLength;i++)
 			{				
-				map.removeLayer(aMarkerList[layer]);			
+				map.removeLayer(aMarkerList[layer][i]);			
 			}
+			
 			aMarkerList[layer] = new Array();
+			
 		};
 				
 		this.addMarker = function (layer,type,latitude, longitude,text,show) {

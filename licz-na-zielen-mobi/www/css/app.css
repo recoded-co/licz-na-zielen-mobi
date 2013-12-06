@@ -87,6 +87,27 @@ padding:0;
 	top:15%;
 }
 
+#near-object-list
+{
+	position:absolute;
+	bottom:0px;
+	width:100%;
+	z-index:2;
+	padding:0 10px;
+	background-color:rgba(0,0,0,0);
+}
+
+
+#near-object-list > div
+{
+	background-color:#fff;
+}
+
+#near-object-list  div.single
+{
+	height:25px;
+}
+
 #footer,#map-footer
 {
 	position:absolute;

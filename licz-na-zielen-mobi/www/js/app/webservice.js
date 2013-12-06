@@ -23,24 +23,23 @@ function jQuery_ajax(args)
 			
 			//var json = '{"success":"true","hits":1,"objects":[{"id": 1060,"type": "praca-lub-nauka","slug": "praca-lub-nauka-23","geometry": "POINT (1885969.0171316999476403 6884584.6045808997005224)","feature": 24,"datasetdef": {"id": 6,"name": "AAA","icon":""},"favorite": "9"}]}';
 			
-			
 			var json = '{"success":"true","hits":1,"objects":[';			
 			
 			json += '{"id":'+Math.floor((Math.random()*1000)+1);
 			json += ',"type": "praca-lub-nauka","slug": "praca-lub-nauka-23","geometry": "POINT (';
-			json += parseFloat(wkt.components[0][0].x)+Math.random()/100;
+			json += parseFloat(wkt.components[0].x)+Math.random()/100;
 			json += ' ';
-			json += parseFloat(wkt.components[0][0].y)+Math.random()/100;
+			json += parseFloat(wkt.components[0].y)+Math.random()/100;
 			json += ')","feature": 24,"datasetdef": {"id": 6,"name": "AAA","icon":""},"favorite": "'+Math.floor((Math.random()*1000)+1);
 			json += '"}';			
 			
-			for(i=0;i<9;i++)
+			for(var i=0;i<9;i++)
 			{						
 				json += ',{"id":'+Math.floor((Math.random()*1000)+1);
 				json += ',"type": "praca-lub-nauka","slug": "praca-lub-nauka-23","geometry": "POINT (';
-				json += parseFloat(wkt.components[0][0].x)+(Math.random()/100*Math.floor((Math.random()*2)-1));
+				json += parseFloat(wkt.components[0].x)+(Math.random()/100*Math.floor((Math.random()*2)-1));
 				json += ' ';
-				json += parseFloat(wkt.components[0][0].y)+(Math.random()/100*Math.floor((Math.random()*2)-1));
+				json += parseFloat(wkt.components[0].y)+(Math.random()/100*Math.floor((Math.random()*2)-1));
 				json += ')","feature": 24,"datasetdef": {"id": 6,"name": "AAA","icon":""},"favorite": "'+Math.floor((Math.random()*1000)+1);
 				json += '"}';	
 			}
@@ -95,13 +94,38 @@ var WebService = (function () {
 			var result = false;
 		
 			request_get(apiUrl.near_objects,
-				{polygon:'POLYGON (('+latitude+' '+longitude+'))'},
+				{polygon:'POINT ('+latitude+' '+longitude+')'},
 				function(data,mb)
 				{					
 					if(data.success)
 					{
-						result = data.objects;
-					}					
+						
+						var nearObjects = new Array();
+	
+						var iCounter = 0;
+						
+						jQuery.each(data.objects, function( key, val ) {
+							
+							var singleObject = new PleaceObject();
+							
+							singleObject.setId(new Array(val.id,val.feature,val.slug,val.datasetdef.id));
+							singleObject.setName(val.datasetdef.name);
+							singleObject.setFavorite(val.favorite);
+							
+							wkt = new Wkt.Wkt();					
+							wkt.read(val.geometry);
+							
+							singleObject.setLatitude(wkt.components[0].x);
+							singleObject.setLongitude(wkt.components[0].y);
+							
+							nearObjects[iCounter++] = singleObject;
+							
+						});
+						
+						result = nearObjects;
+					}else{
+						alert(data.error_message);
+					}			
 				}
 			);
 			
