@@ -9,7 +9,7 @@
 var map;
 var webapi;
 var device;
-var nearObjects;
+var cachedNearObjects;
 var wkt;
 
 //requirejs(['jquery','leaflet','app/android','Google'],
@@ -21,6 +21,11 @@ jQuery(document).ready(function(){
 	webapi = new WebService();	
 	map = new MapWrapper('map',InitApp);
 	
+	webapi.saveSettings('fav',true);
+	
+	//if(webapi.getSettings('fav'))
+	//	showFavorite(true);
+	
 	jQuery('#menu-btn').click(function()
 	{	
 		if(jQuery('#map').css('left')=='0px')
@@ -31,7 +36,53 @@ jQuery(document).ready(function(){
 	
 	jQuery('#find-near-btn').click(searchNearObjects);
 	
+	jQuery('#hide-near-dlg').click(function()
+	{	
+		jQuery('#near-object-list').hide();
+	});
+	
+	
 });
+
+
+function showFavorite(bShow)
+{
+	if(!bShow)
+	{
+		map.removeMarkers('fav');
+		return true;
+	}
+
+	var favObjects = webapi.getFavoriteObjects();
+		
+	if(favObjects != false){			
+	
+		jQuery.each(favObjects, function( key, val ) {				
+			map.addMarker('fav',map.MARKER_GREEN,val.getLatitude(),val.getLongitude(),val.getName(),false);				
+		});
+		
+	}else{
+		return false;
+	}
+	
+	return true;
+}
+
+function showObjectOnList(simpleObject,color,dist)
+{	
+	var oObject = $('#near-object-list').find('.template').clone();
+	
+	oObject.removeClass('template hidden');
+	
+	oObject.find('.obj-name').text(simpleObject.getName());
+	oObject.find('.obj-fav').text(simpleObject.getFavorite());
+	oObject.find('.obj-dist').text(dist);
+
+	oObject.find('.obj-color').addClass('obj-'+color);
+	
+	jQuery('#near-continer').append(oObject);
+	
+}
 
 function searchNearObjects()
 {
@@ -66,16 +117,28 @@ function searchNearObjects()
 	
 	map.removeMarkers('near');
 	
+	cachedNearObjects = new Array();
 	
 	if(nearObjects != false){			
 	
 		jQuery.each(nearObjects, function( key, val ) {	
 			
-			map.addMarker('near',markerColorList[iCounter++],val.getLatitude(),val.getLongitude(),val.getName(),false);
+			var distance = centerPoint.distanceTo([val.getLatitude(),val.getLongitude()]);
+			distance = parseFloat(distance/1000.0).toFixed(2);
+			
+			map.addMarker('near',markerColorList[iCounter++],val.getLatitude(),val.getLongitude(),'<b>'+val.getName()+'</b><br />'+distance+' km',false);
+			
+			cachedNearObjects[val.getGUID()] = val;
+			
+			showObjectOnList(val,markerColorList[iCounter-1],distance);
+				
+			//webapi.saveFavoriteObject(val);
 			
 		});
 		
 		map.fitZoom('near',5,centerPoint);
+		
+		jQuery('#near-object-list').show();
 		
 	}else{
 		alert('error');

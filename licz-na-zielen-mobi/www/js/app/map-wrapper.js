@@ -108,7 +108,7 @@ var MapWrapper = (function () {
 				iEast = centerPoint.lat;			
 			
 			
-			for(i=0;i<iNumber;i++)
+			for(var i=0;i<iNumber;i++)
 			{				
 				if(markerst[i][1].lng<iSouth)
 					iSouth = markerst[i][1].lng;

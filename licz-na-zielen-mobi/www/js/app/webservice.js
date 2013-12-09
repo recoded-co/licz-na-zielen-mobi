@@ -4,18 +4,9 @@ Android
 
 */
 
-function dump(obj) {
-    var out = '';
-    for (var i in obj) {
-        out += i + ": " + obj[i] + "\n";
-    }
-
-    alert(out);
-}
-
-function jQuery_ajax(args)
+function fakeApiNearObjects(args)
 {
-		try
+	try
 		{
 			
 			var wkt = new Wkt.Wkt();			
@@ -53,16 +44,33 @@ function jQuery_ajax(args)
 		}catch(e)
 		{
 			alert(e.message );
-		}	
+		}
+}
+
+function fakeApiSearchObjects(args)
+{
+	
+}
+
+var apiUrl =
+{
+  near_objects: 'https://example.com/geocache/search/polygon/',
+  search_objects: 'https://example.com/geocache/search/namehint/',
+  details_object: 'https://example.com/geocache/feat/'
+}
+
+function jQuery_ajax(args)
+{
+	if(args.url==apiUrl.near_objects)
+		fakeApiNearObjects(args);
+	else if(args.url==apiUrl.search_objects)
+		fakeApiSearchObjects(args);
+	else
+		args.success('');
 }
 
 
 var WebService = (function () {
-
-	var apiUrl =
-	{
-	  near_objects: 'https://example.com/geocache/search/polygon/'
-	}
 		
 	function request_get(url_string,extra_data,success_callback)
 	{		
@@ -72,7 +80,7 @@ var WebService = (function () {
 				dataType: "jsonp",
 				type: 'GET',
 				async:true,                    
-				url:apiUrl.near_objects,
+				url:url_string,
 				data:extra_data,
 				success:function(data)
 				{
@@ -106,7 +114,7 @@ var WebService = (function () {
 						
 						jQuery.each(data.objects, function( key, val ) {
 							
-							var singleObject = new PleaceObject();
+							var singleObject = new PleaceObject(true);
 							
 							singleObject.setId(new Array(val.id,val.feature,val.slug,val.datasetdef.id));
 							singleObject.setName(val.datasetdef.name);
@@ -132,6 +140,59 @@ var WebService = (function () {
 			return result;
 			
         };
+		
+		this.getDetails = function (singleObject) {
+			
+		};
+		
+		this.saveSettings = function (key,value) {		
+			localStorage.setItem(key,value);
+		};
+		
+		this.getSettings = function (key) {
+			return localStorage.getItem(key);		
+		};
+		
+		this.saveFavoriteObject = function (singleObject) {		
+			var storedNames = new Array();
+			
+			if(localStorage["favorite"])
+				storedNames = JSON.parse(localStorage["favorite"]);
+			
+			storedNames[storedNames.length] = singleObject.getData();
+			
+			console.debug(storedNames[storedNames.length-1]);
+			
+			localStorage.setItem('favorite', JSON.stringify(storedNames));			
+		};
+		
+		this.getFavoriteObjects = function () {
+			
+			var favObjects = new Array();
+			
+			if(!localStorage["favorite"])
+				return favObjects;
+			
+			try
+			{
+					var favData = JSON.parse(localStorage["favorite"])
+								
+					var iCounter = 0;
+					
+					jQuery.each(favData, function( key, val ) {				
+						var singleObject = new PleaceObject(true);	
+						singleObject.setData(val);
+						favObjects[iCounter++] = singleObject;
+					});			
+			}catch(e){}
+			
+			return favObjects;			
+		};
+		
+		this.getSearchObjects = function (sSearchText) {		
+			return false;			
+        };
+		
 		
     };    
 

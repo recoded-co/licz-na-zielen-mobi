@@ -95,6 +95,7 @@ padding:0;
 	z-index:2;
 	padding:0 10px;
 	background-color:rgba(0,0,0,0);
+	display:none;
 }
 
 
@@ -102,6 +103,135 @@ padding:0;
 {
 	background-color:#fff;
 }
+
+#near-continer
+{
+	height:272px;
+	overflow:scroll;
+}
+
+#near-continer > div > div
+{
+	float:left;
+	overflow:hidden;
+}
+
+#near-continer > div > div:first-child
+{
+	width:1%;
+	height:54px;
+}
+
+#near-continer > div > div:last-child
+{
+	width:99%;
+}
+
+#near-dialog-buttons
+{
+	overflow:hidden;
+}
+
+#near-dialog-buttons > button
+{
+	float:left;
+	width:50%;
+	height:56px;
+	border:none;
+	outline:none;
+}
+
+#hide-near-dlg
+{
+	background-color:#53cbf5;
+}
+
+#search-near-dlg
+{
+	background-color:#8fbe00;
+}
+
+.obj-filler
+{
+	overflow:hidden;
+}
+
+.obj-filler > div
+{
+	width:46%;
+	margin:0% 2%;
+	float:left;
+}
+
+.obj-filler > div:last-child
+{
+	text-align:right;
+}
+
+.obj-name
+{
+	font-size:20px;
+	color:#546914;
+	font-weight:bold;
+}
+
+#near-continer div.obj-filler:last-child
+{
+	padding-bottom:3px
+}
+
+#near-continer div.obj-filler:first-child
+{
+	padding-top:3px
+}
+.obj-fav
+{
+	font-size:14px;
+	color:#8fbe00;
+}
+
+.obj-icons
+{
+	
+}
+
+.obj-dist-span
+{
+	font-size:14px;
+	color:#8aae19;
+}
+
+.obj-blue{
+background-color:#014b96;
+}
+.obj-purple{
+background-color:#d988f0;
+}
+.obj-yellow{
+background-color:#fdc916;
+}
+.obj-red{
+background-color:#d43838;
+}
+.obj-green2{
+background-color:#2ec8bb;
+}
+.obj-purple2{
+background-color:#7833de;
+}
+.obj-green3{
+background-color:#c6ff00;
+}
+.obj-aqua{
+background-color:#76dbff;
+}
+.obj-gray{
+background-color:#565668;
+}
+.obj-brown{
+background-color:#56123a;
+}
+
 
 #near-object-list  div.single
 {

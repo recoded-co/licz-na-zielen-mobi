@@ -8,53 +8,100 @@ Android
 var PleaceObject = (function () {
 	
 	//constructor
-    var cls = function () {
+    var cls = function (isNew) {
         
-		var sName = '';
-		var dLatitude = '';
-		var dLongitude = '';
-		var iFavorite = 0;
-		var oId = '';
 		
+		var  objData = new Object(); 
+		
+		objData.sName = '';
+		objData.dLatitude = '';
+		objData.dLongitude = '';
+		objData.iFavorite = 0;
+		objData.oId = '';
+		
+		var iDistance = 0;
+		var bCache = isNew;
+		
+		objData.toJSON = function(key)
+		 {
+			var replacement = new Object();
+			for (var val in this)
+			{
+				if (typeof (this[val]) === 'string')
+					replacement[val] = this[val].toUpperCase();
+				else
+					replacement[val] = this[val]
+			}
+			return replacement;
+		};
+		
+				
 		this.getName = function () {			
-			return sName;			
+			return objData.sName;			
         };
 		
 		this.getLatitude = function () {			
-			return dLatitude;			
+			return objData.dLatitude;			
         };
 		
 		this.getLongitude = function () {			
-			return dLongitude;			
+			return objData.dLongitude;			
         };
 		
 		this.setName = function (name) {			
-			sName = name;			
+			objData.sName = name;			
         };
 		
 		this.setLatitude = function (lat) {			
-			dLatitude = lat;			
+			objData.dLatitude = lat;			
         };
 		
 		this.setLongitude = function (lng) {			
-			dLongitude = lng;			
+			objData.dLongitude = lng;			
         };
 		
 		this.getFavorite = function () {			
-			return iFavorite;			
+			return objData.iFavorite;			
         };
 		
 		this.setFavorite = function (fav) {			
-			iFavorite = fav;			
+			objData.iFavorite = fav;			
         };
 		
 		this.getId = function () {			
-			return oId;			
+			return objData.oId;			
         };
 		
 		this.setId = function (id) {			
-			oId = id;			
+			objData.oId = id;			
+        };	
+		
+		this.getGUID = function (id) {			
+			return objData.oId[0];			
         };
+		
+		this.getData = function () {			
+			return JSON.stringify(objData)
+        };
+		
+		this.setData = function (sText) {	
+			
+			try
+			{
+				objData = JSON.parse(sText);
+			}catch(e)
+			{
+				
+			}
+        };	
+		
+		this.getDistance = function () {			
+			return iDistance;
+        };
+		
+		this.setDistance = function (dist) {	
+			iDistance = dist;
+        };		
 		
     };    
 
