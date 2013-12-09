@@ -149,9 +149,13 @@ var MapWrapper = (function () {
 			
 		};
 				
-		this.addMarker = function (layer,type,latitude, longitude,text,show) {
+		this.addMarker = function (layer,type,latitude, longitude,text,show,callback,data) {
 		
 			var mark = L.marker([latitude, longitude],{icon: markers[type]}).addTo(map).bindPopup(text);
+			
+			mark.on('click', function(e) {
+				callback(data,e.latlng);
+			});
 			
 			if(show)
 				mark.openPopup();				

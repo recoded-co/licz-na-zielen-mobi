@@ -49,7 +49,15 @@ function fakeApiNearObjects(args)
 
 function fakeApiSearchObjects(args)
 {
-	
+	try
+	{	
+		var json = '{"success":"true","object":{"raw_properties":[{"value": "codziennie-lub-prawie-codziennie","key": "4.2. Czestotliwosc odwiedzania"},{"value":"rowerem","key": "4.3. Sposob dotarcia"}]}}';
+		json = jQuery.parseJSON(json);		
+		args.success(json);	
+	}catch(e)
+	{
+		alert(e.message );
+	}
 }
 
 var apiUrl =
@@ -63,7 +71,7 @@ function jQuery_ajax(args)
 {
 	if(args.url==apiUrl.near_objects)
 		fakeApiNearObjects(args);
-	else if(args.url==apiUrl.search_objects)
+	else if(args.url.search(apiUrl.search_objects))
 		fakeApiSearchObjects(args);
 	else
 		args.success('');
@@ -126,6 +134,10 @@ var WebService = (function () {
 							singleObject.setLatitude(wkt.components[0].x);
 							singleObject.setLongitude(wkt.components[0].y);
 							
+							//TODO
+							singleObject.addIcon('rower');
+							singleObject.addIcon('muzeum');
+							
 							nearObjects[iCounter++] = singleObject;
 							
 						});
@@ -142,7 +154,35 @@ var WebService = (function () {
         };
 		
 		this.getDetails = function (singleObject) {
+
+			var result = false;
+		
+			var aId = singleObject.getId();
+					
+			request_get(apiUrl.details_object+aId[1]+'/'+aId[3]+'/'+aId[2],
+				{feature:aId[1],datasetdef_id:aId[3],slug:aId[2]},
+				function(data,mb)
+				{					
+					if(data.success)
+					{
+						singleObject.clearQuestionsAnswers();
+						
+						jQuery.each(data.object.raw_properties, function( key, val ) {
+							singleObject.addQuestionAnswer(val.key,val.value);
+						});						
+						
+						//TODO
+						singleObject.setPopularity(3);
+						
+						result = true;
+						
+					}else{
+						alert(data.error_message);
+					}			
+				}
+			);
 			
+			return result;			
 		};
 		
 		this.saveSettings = function (key,value) {		
@@ -160,10 +200,30 @@ var WebService = (function () {
 				storedNames = JSON.parse(localStorage["favorite"]);
 			
 			storedNames[storedNames.length] = singleObject.getData();
-			
-			console.debug(storedNames[storedNames.length-1]);
-			
+				
 			localStorage.setItem('favorite', JSON.stringify(storedNames));			
+		};
+		
+		this.clearFavoriteObjects = function () {
+			localStorage.setItem('favorite','');
+		};
+		
+		this.enumFavoriteObjects = function (before_callback,enum_callback,after_callback) {
+			
+			var favObjects = this.getFavoriteObjects();
+		
+			if(jQuery.isFunction(before_callback))
+				before_callback();
+		
+			if(jQuery.isFunction(enum_callback))
+				if(favObjects != false){
+					jQuery.each(favObjects, function( key, val ) {				
+						enum_callback(val);
+					});					
+				}			
+			
+			if(jQuery.isFunction(after_callback))
+				after_callback();
 		};
 		
 		this.getFavoriteObjects = function () {
@@ -176,20 +236,22 @@ var WebService = (function () {
 			try
 			{
 					var favData = JSON.parse(localStorage["favorite"])
-								
+					
 					var iCounter = 0;
 					
 					jQuery.each(favData, function( key, val ) {				
 						var singleObject = new PleaceObject(true);	
 						singleObject.setData(val);
 						favObjects[iCounter++] = singleObject;
-					});			
+					});
+					
 			}catch(e){}
 			
 			return favObjects;			
 		};
 		
-		this.getSearchObjects = function (sSearchText) {		
+		this.getSearchObjects = function (sSearchText) {
+			//TODO
 			return false;			
         };
 		

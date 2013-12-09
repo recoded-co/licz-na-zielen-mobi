@@ -17,15 +17,32 @@ var wkt;
 
 jQuery(document).ready(function(){
 	
+	//Init classes
 	device=new MobileDevice();	
 	webapi = new WebService();	
 	map = new MapWrapper('map',InitApp);
 	
+	//Update favorite info
+	webapi.enumFavoriteObjects(
+		function()
+		{
+			webapi.clearFavoriteObjects();
+		},
+		function(simpleObject)
+		{
+			webapi.getDetails(simpleObject);
+			webapi.saveFavoriteObject(simpleObject);
+		},''
+	);
+	
+	//To Remove	
 	webapi.saveSettings('fav',true);
 	
-	//if(webapi.getSettings('fav'))
-	//	showFavorite(true);
+	//Show favorite
+	if(webapi.getSettings('fav'))
+		showFavorite(true);
 	
+	//Show/Hide menu
 	jQuery('#menu-btn').click(function()
 	{	
 		if(jQuery('#map').css('left')=='0px')
@@ -34,13 +51,27 @@ jQuery(document).ready(function(){
 			$( "#map" ).animate({ "left": "0%" }, "slow" );
 	});
 	
+	//Find 10 objects button
 	jQuery('#find-near-btn').click(searchNearObjects);
 	
+	//Hide dialog whit 10 objects
 	jQuery('#hide-near-dlg').click(function()
 	{	
 		jQuery('#near-object-list').hide();
 	});
 	
+	//Hide object detalis dialog
+	jQuery('#object-menu > button').click(function()
+	{	
+		jQuery('#object-dlg').hide();
+	});
+	
+	//Add to favorite
+	jQuery('#fav-obj-dlg').click(function()
+	{	
+		var id = $(this).find('span').text();		
+		webapi.saveFavoriteObject(cachedNearObjects[id]);
+	});
 	
 });
 
@@ -52,36 +83,81 @@ function showFavorite(bShow)
 		map.removeMarkers('fav');
 		return true;
 	}
-
-	var favObjects = webapi.getFavoriteObjects();
-		
-	if(favObjects != false){			
 	
-		jQuery.each(favObjects, function( key, val ) {				
-			map.addMarker('fav',map.MARKER_GREEN,val.getLatitude(),val.getLongitude(),val.getName(),false);				
-		});
+	webapi.enumFavoriteObjects('',
+		function(simpleObject)
+		{			
+			map.addMarker('fav',map.MARKER_GREEN,simpleObject.getLatitude(),simpleObject.getLongitude(),
+			simpleObject.getName(),false,showObjectDetalis,simpleObject);
+		},'');
 		
-	}else{
-		return false;
-	}
-	
 	return true;
 }
 
+function triggerShowDetalis()
+{	
+	showObjectDetalis(cachedNearObjects[$(this).attr('id')],'');
+}	
+	
 function showObjectOnList(simpleObject,color,dist)
 {	
 	var oObject = $('#near-object-list').find('.template').clone();
 	
 	oObject.removeClass('template hidden');
 	
+	oObject.attr('id',simpleObject.getGUID());
+	
 	oObject.find('.obj-name').text(simpleObject.getName());
 	oObject.find('.obj-fav').text(simpleObject.getFavorite());
 	oObject.find('.obj-dist').text(dist);
-
-	oObject.find('.obj-color').addClass('obj-'+color);
+	oObject.find('.obj-color').addClass('obj-'+color);	
+	oObject.bind('click',triggerShowDetalis);
+	
+	var oObjIcons = oObject.find('.obj-icons');
+	
+	simpleObject.enumIcons(function(ico){
+		oObjIcons.append('<div>*'+ico+'</div>');
+	});
 	
 	jQuery('#near-continer').append(oObject);
 	
+}
+
+function showObjectDetalis(simpleObject,e)
+{
+	jQuery('#near-object-list').hide();
+	
+	var oObjectDlg = $('#object-dlg');
+	
+	oObjectDlg.find('.obj-name').text(simpleObject.getName());
+	oObjectDlg.find('.obj-dist').text(2.4);
+
+	var oQuest = jQuery('#obj-quesans');
+	oQuest.empty();
+	
+	simpleObject.enumQuestionsAnswers(function(q,a){
+		oQuest.append('<div><span>'+q+'</span><p>'+a+'</p></div>');
+	});
+	
+	var oObjStars = oObjectDlg.find('.obj-stars');
+	oObjStars.empty();
+	
+	for(var i = 0;i<simpleObject.getPopularity();i++)
+		oObjStars.append('<img src="images/yellow_star_ico.png" />');
+	
+	for(var i = simpleObject.getPopularity();i<5;i++)
+		oObjStars.append('<img src="images/grey_star_ico.png" />');
+		
+	var oObjIcons = oObjectDlg.find('.obj-icons');
+	oObjIcons.empty();
+	
+	simpleObject.enumIcons(function(ico){
+		oObjIcons.append('<div>*'+ico+'</div>');
+	});
+	
+	jQuery('#fav-obj-dlg').find('span').text(simpleObject.getGUID());
+	
+	oObjectDlg.show();
 }
 
 function searchNearObjects()
@@ -113,7 +189,7 @@ function searchNearObjects()
 	
 	var centerPoint = map.getCenterOfMap();		
 		
-	nearObjects = webapi.getNearObjects(centerPoint.lat,centerPoint.lng);
+	var nearObjects = webapi.getNearObjects(centerPoint.lat,centerPoint.lng);
 	
 	map.removeMarkers('near');
 	
@@ -123,10 +199,13 @@ function searchNearObjects()
 	
 		jQuery.each(nearObjects, function( key, val ) {	
 			
+			webapi.getDetails(val);
+			
 			var distance = centerPoint.distanceTo([val.getLatitude(),val.getLongitude()]);
 			distance = parseFloat(distance/1000.0).toFixed(2);
 			
-			map.addMarker('near',markerColorList[iCounter++],val.getLatitude(),val.getLongitude(),'<b>'+val.getName()+'</b><br />'+distance+' km',false);
+			map.addMarker('near',markerColorList[iCounter++],val.getLatitude(),val.getLongitude(),
+			'<b>'+val.getName()+'</b><br />'+distance+' km',false,showObjectDetalis,val);
 			
 			cachedNearObjects[val.getGUID()] = val;
 			
@@ -154,7 +233,7 @@ function searchNearObjects()
 function InitApp(latitude,longitude)
 {
 	map.setCenter(latitude,longitude,0);
-	map.addMarker('primary',map.MARKER_ORANGE,latitude, longitude,'Jesteś tutaj',true);
+	map.addMarker('primary',map.MARKER_ORANGE,latitude, longitude,'Jesteś tutaj',true,function(){},'');
 	$('#splashscreen').hide();
 }
 

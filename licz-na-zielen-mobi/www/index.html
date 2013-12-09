@@ -73,11 +73,33 @@
 	
 	<div id="map-footer">
 		<div><img id="find-near-btn" src="images/radar_btn_100.png" /></div>
+		
 	</div>
 	
 	<div id="menu-page">
 		<div>
 			<div>MENU</div>
+		</div>
+	</div>
+	
+	<div id='object-dlg'>
+		<div id="object-menu"><button><img src="images/close_profile_ico.png" /></button></div>
+		<div>
+			<div id='object-title-bar' class="divide">
+				<div class="obj-name"></div>
+				<div class="obj-stars"></div>
+			</div>
+			<div id='object-info' class="shrink divide">
+				<div class="obj-dist-span">Do celu <span class="obj-dist"></span> km</div>
+				<div class="obj-icons">&nbsp;</div>
+			</div>
+			<div id="obj-quesans" class="shrink">
+				&nbsp;
+			</div>
+			<div class='near-dialog-buttons shrink'>
+				<button id='face-obj-dlg'><img src="images/facebook_share_ico.png" /></button>
+				<button id='fav-obj-dlg'><span class="hidden"></span><img src="images/fav_profile_ico.png" /></button>
+			</div>
 		</div>
 	</div>
 	
@@ -91,13 +113,13 @@
 				</div>
 				<div class='obj-filler'>
 					<div class="obj-dist-span">Do celu <span class="obj-dist"></span> km</div>
-					<div class="obj-icons">&nbsp;</div>
+					<div class="obj-icons"></div>
 				</div>
 			</div>
 		</div>
 		<div id='near-continer'>
 		</div>
-		<div id='near-dialog-buttons'>
+		<div class='near-dialog-buttons'>
 			<button id='search-near-dlg'><img src="images/radar_list_ico.png" /></button>
 			<button id='hide-near-dlg'><img src="images/close_list_ico.png" /></button>
 		</div>

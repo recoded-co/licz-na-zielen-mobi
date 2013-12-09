@@ -18,6 +18,9 @@ var PleaceObject = (function () {
 		objData.dLongitude = '';
 		objData.iFavorite = 0;
 		objData.oId = '';
+		objData.aQuestAns = new Array();
+		objData.aIcons = new Array();
+		objData.iPopularity = 0;
 		
 		var iDistance = 0;
 		var bCache = isNew;
@@ -103,7 +106,44 @@ var PleaceObject = (function () {
 			iDistance = dist;
         };		
 		
-    };    
+		this.getPopularity = function () {			
+			return objData.iPopularity;
+        };
+		
+		this.setPopularity = function (pop) {	
+			objData.iPopularity = pop;
+        };			
+		
+		this.addQuestionAnswer = function (q,a) {			
+			objData.aQuestAns[objData.aQuestAns.length] = new Array(q,a);
+        };
+		
+		this.clearQuestionsAnswers = function (callback) {	
+			objData.aQuestAns = new Array();
+        };	
+		
+		this.enumQuestionsAnswers = function (callback) {	
+		
+			if(objData.aQuestAns.length)
+				jQuery.each(objData.aQuestAns, function( key, val ) {				
+					callback(val[0],val[1]);
+				});
+        };				
+		
+		this.addIcon = function (ico) {			
+			objData.aIcons[objData.aIcons.length] = ico;
+        };
+		
+		this.enumIcons = function (callback) {	
+		
+			if(objData.aIcons.length)
+				jQuery.each(objData.aIcons, function( key, val ) {				
+					callback(val);
+				});
+			
+        };	
+		
+    }; 
 
     return cls;
 })();

@@ -68,6 +68,44 @@ padding:0;
 	width:80%;
 }
 
+#obj-quesans  > div
+{
+	padding:5px;
+	background-color:#fff;
+}
+
+#obj-quesans  > div:nth-child(2n)
+{
+	padding:5px;
+	background-color:#effdc2;
+}
+
+#obj-quesans  p
+{
+	margin:0;
+	color:#546914;
+}
+
+#obj-quesans span
+{
+	margin:0;
+	color:#8fbe00;
+	font-weight:bold;
+	padding-bottom:5px;
+}
+
+#obj-quesans
+{
+	height:250px;
+	overflow-x:hidden;
+}
+
+
+#object-info
+{
+	height:50px;
+}
+
 .image-animation {    
     -webkit-animation:spin 2s linear infinite;
     -moz-animation:spin 2s linear infinite;
@@ -87,15 +125,86 @@ padding:0;
 	top:15%;
 }
 
-#near-object-list
+#near-object-list,#object-dlg
 {
 	position:absolute;
 	bottom:0px;
 	width:100%;
 	z-index:2;
-	padding:0 10px;
-	background-color:rgba(0,0,0,0);
 	display:none;
+	
+}
+
+#object-dlg
+{
+	height:100%;
+}
+
+#object-dlg > div
+{
+	width:100%;
+}
+
+#object-dlg	> div:last-child
+{
+	position:absolute;
+	bottom:0px;
+}
+
+#object-menu
+{
+	position:absolute;
+	top:50px;
+	overflow:hidden;	
+}
+
+#object-menu > button
+{
+	height:50px;
+	width:50px;	
+	float:right;
+	border:none;
+	background-color:#8fbe00;
+}
+
+#object-dlg
+{
+	height:100%;
+}
+
+#near-object-list
+{	
+	background-color:rgba(0,0,0,0);
+	padding:0 10px;
+}
+
+#object-dlg  div.shrink
+{
+	padding:0 10px;
+	background:#f6fce3;
+	min-height:30px;
+}
+
+.divide
+{
+	overflow:hidden;
+}
+
+.divide > div:first-child
+{
+	float:left;
+}
+
+.divide > div:last-child
+{
+	float:right;
+}
+
+
+#object-title-bar
+{	
+	background-color:rgba(255,255,255,0.6);
+	padding:8px 10px;
 }
 
 
@@ -107,7 +216,7 @@ padding:0;
 #near-continer
 {
 	height:272px;
-	overflow:scroll;
+	overflow-x:hidden;
 }
 
 #near-continer > div > div
@@ -127,18 +236,28 @@ padding:0;
 	width:99%;
 }
 
-#near-dialog-buttons
+.near-dialog-buttons
 {
 	overflow:hidden;
 }
 
-#near-dialog-buttons > button
+.near-dialog-buttons > button
 {
 	float:left;
 	width:50%;
 	height:56px;
 	border:none;
 	outline:none;
+}
+
+#face-obj-dlg
+{
+	background-color:#014b96;
+}
+
+#fav-obj-dlg
+{
+	background-color:#f4812d;
 }
 
 #hide-near-dlg
@@ -192,7 +311,16 @@ padding:0;
 
 .obj-icons
 {
-	
+	overflow:hidden;
+}
+
+.obj-icons > div
+{
+	float:right;
+	color:#fff;
+	padding:0px 4px;
+	background-color:#53cbf5;
+	margin-left:5px;
 }
 
 .obj-dist-span
