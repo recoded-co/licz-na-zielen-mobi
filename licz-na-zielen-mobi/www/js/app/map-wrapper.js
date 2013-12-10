@@ -11,10 +11,12 @@ var MapWrapper = (function () {
         
 		function onLocationFound(e) {
 			locationCallback(e.latlng.lat,e.latlng.lng);
+			//locationCallback(52.399, 16.900);
 		}
 
 		function onLocationError(e) {
 			alert(e.message);
+			//locationCallback(52.399, 16.900);
 		}
 		
 		var aMarkerList = new Array();
