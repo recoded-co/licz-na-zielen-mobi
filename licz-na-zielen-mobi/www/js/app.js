@@ -138,9 +138,9 @@ function showObjectOnList(simpleObject,color,dist)
 	
 	var oObjIcons = oObject.find('.obj-icons');
 	
-	simpleObject.enumIcons(function(ico){
-		oObjIcons.append('<div>*'+ico+'</div>');
-	});
+	//simpleObject.enumIcons(function(ico){
+	//	oObjIcons.append('<div>*'+ico+'</div>');
+	//});
 	
 	jQuery('#near-continer').append(oObject);
 	
@@ -222,7 +222,9 @@ function searchNearObjects()
 	
 		jQuery.each(nearObjects, function( key, val ) {	
 			
-			webapi.getDetails(val);
+			//webapi.getDetails(val);
+			
+			//alert(val);
 			
 			var distance = centerPoint.distanceTo([val.getLatitude(),val.getLongitude()]);
 			distance = parseFloat(distance/1000.0).toFixed(2);
@@ -243,7 +245,7 @@ function searchNearObjects()
 		jQuery('#near-object-list').show();
 		
 	}else{
-		alert('error');
+		alert('errorek');
 	}
 	
 	near_btn.removeClass('image-animation');

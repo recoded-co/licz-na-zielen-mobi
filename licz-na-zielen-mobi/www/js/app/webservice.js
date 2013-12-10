@@ -62,9 +62,9 @@ function fakeApiSearchObjects(args)
 
 var apiUrl =
 {
-  near_objects: 'https://example.com/geocache/search/polygon/',
-  search_objects: 'https://example.com/geocache/search/namehint/',
-  details_object: 'https://example.com/geocache/feat/'
+  near_objects: 'http://alfa.licznazielen.pl/geocache/search/geo/',
+  search_objects: 'http://alfa.licznazielen.pl/geocache/search/namehint/',
+  details_object: 'http://alfa.licznazielen.pl/geocache/search/object/'
 }
 
 function jQuery_ajax(args)
@@ -83,13 +83,13 @@ var WebService = (function () {
 	function request_get(url_string,extra_data,success_callback)
 	{		
 		
-		jQuery_ajax(
+		jQuery.ajax(
 			{
-				dataType: "jsonp",
+				dataType: "json",
 				type: 'GET',
-				async: true,
+				async: false,
 				url:url_string,
-				data:extra_data,
+				//data:extra_data,
 				success:function(data)
 				{
 					success_callback(data,true);
@@ -106,46 +106,59 @@ var WebService = (function () {
     var cls = function (div_tag) {
         
 		this.getNearObjects = function (latitude, longitude) {
-		
+				
 			var result = false;
 		
-			request_get(apiUrl.near_objects,
+			request_get(apiUrl.near_objects+'?polygon=POINT+('+latitude+'+'+longitude+')/',
 				{polygon:'POINT ('+latitude+' '+longitude+')'},
 				function(data,mb)
 				{					
-					if(data.success)
-					{
-						
+					//if(data.success)
+					//{
 						var nearObjects = new Array();
 	
 						var iCounter = 0;
 						
-						jQuery.each(data.objects, function( key, val ) {
+						//alert(data.length);
+						
+						//jQuery.each(data, function( key, val ) {
+						
+						for(var i=0;i<data.length;i++)
+						{
+							var val = data[i];
+							
+							
+							if(typeof val === 'undefined')
+							{
+							}else
+							{
+							
+							
 							
 							var singleObject = new PleaceObject(true);
 							
 							singleObject.setId(new Array(val.id,val.feature,val.slug,val.datasetdef.id));
-							singleObject.setName(val.datasetdef.name);
+							singleObject.setName(val.name);
 							singleObject.setFavorite(val.favorite);
 							
 							wkt = new Wkt.Wkt();					
-							wkt.read(val.geometry);
+							wkt.read(val.place_LL);
 							
-							singleObject.setLatitude(wkt.components[0].x);
-							singleObject.setLongitude(wkt.components[0].y);
+							singleObject.setLatitude(wkt.components[0].y);
+							singleObject.setLongitude(wkt.components[0].x);
 							
 							//TODO
-							singleObject.addIcon('rower');
+							//singleObject.addIcon('rower');
 							singleObject.addIcon('muzeum');
 							
 							nearObjects[iCounter++] = singleObject;
-							
-						});
+							}
+						}
 						
 						result = nearObjects;
-					}else{
-						alert(data.error_message);
-					}			
+					//}else{
+					//	alert(data.error_message);
+					//}			
 				}
 			);
 			

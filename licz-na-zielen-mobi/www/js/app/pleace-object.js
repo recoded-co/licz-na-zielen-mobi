@@ -13,7 +13,7 @@ var PleaceObject = (function () {
 		
 		var  objData = new Object(); 
 		
-		objData.sName = '';
+		objData.sName = 'AAA';
 		objData.dLatitude = '';
 		objData.dLongitude = '';
 		objData.iFavorite = 0;
@@ -52,7 +52,7 @@ var PleaceObject = (function () {
         };
 		
 		this.setName = function (name) {			
-			objData.sName = name;			
+			//objData.sName = name;			
         };
 		
 		this.setLatitude = function (lat) {			
