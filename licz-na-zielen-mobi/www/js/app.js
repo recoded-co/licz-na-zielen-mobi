@@ -10,7 +10,6 @@ var map;
 var webapi;
 var device;
 var cachedNearObjects;
-var wkt;
 
 //requirejs(['jquery','leaflet','app/android','Google'],
 //function   ($,lf,mb,gg) {
@@ -34,21 +33,29 @@ jQuery(document).ready(function(){
 			webapi.saveFavoriteObject(simpleObject);
 		},''
 	);
-	
-	//To Remove	
-	webapi.saveSettings('fav',true);
-	
+			
 	//Show favorite
-	if(webapi.getSettings('fav'))
+	if(webapi.getSettings('fav')=='true')
 		showFavorite(true);
+	else{
+		$('#off-fav-btn').addClass('activ');
+		$('#on-fav-btn').removeClass('activ');
+	}
 	
-	//Show/Hide menu
+	//Show/Hide menu TODO
 	jQuery('#menu-btn').click(function()
 	{	
-		if(jQuery('#map').css('left')=='0px')
+		if(jQuery('#map').css('left')=='0px'){
 			$( "#map" ).animate({ "left": "-90%" }, "slow" );
-		else
+			$( "#object-dlg" ).animate({ "left": "-90%" }, "slow" );			
+			$( "#near-object-list" ).animate({ "left": "-90%" }, "slow" );
+			$( "#map-footer" ).animate({ "left": "-90%" }, "slow" );
+		}else{
 			$( "#map" ).animate({ "left": "0%" }, "slow" );
+			$( "#object-dlg" ).animate({ "left": "0%" }, "slow" );
+			$( "#near-object-list" ).animate({ "left": "0%" }, "slow" );
+			$( "#map-footer" ).animate({ "left": "0%" }, "slow" );
+		}
 	});
 	
 	//Find 10 objects button
@@ -71,6 +78,22 @@ jQuery(document).ready(function(){
 	{	
 		var id = $(this).find('span').text();		
 		webapi.saveFavoriteObject(cachedNearObjects[id]);
+	});
+	
+	jQuery('#on-fav-btn').click(function()
+	{	
+		$(this).addClass('activ');
+		$('#off-fav-btn').removeClass('activ');
+		showFavorite(true);
+		webapi.saveSettings('fav',true);
+	});
+	
+	jQuery('#off-fav-btn').click(function()
+	{	
+		$(this).addClass('activ');
+		$('#on-fav-btn').removeClass('activ');
+		showFavorite(false);
+		webapi.saveSettings('fav',false);
 	});
 	
 });
