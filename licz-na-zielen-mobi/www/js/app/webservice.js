@@ -17,9 +17,9 @@ function fakeApiNearObjects(args)
 			
 			json += '{"id":'+Math.floor((Math.random()*1000)+1);
 			json += ',"type": "praca-lub-nauka","slug": "praca-lub-nauka-23","place_LL": "POINT (';
-			json += parseFloat(wkt.components[0].y)+Math.random()/100;
-			json += ' ';
 			json += parseFloat(wkt.components[0].x)+Math.random()/100;
+			json += ' ';
+			json += parseFloat(wkt.components[0].y)+Math.random()/100;
 			json += ')","feature": 24,"datasetdef": {"id": 6,"name": "AAA","icon":""},"favorite": "'+Math.floor((Math.random()*1000)+1);
 			json += '"}';			
 			
@@ -27,9 +27,9 @@ function fakeApiNearObjects(args)
 			{						
 				json += ',{"id":'+Math.floor((Math.random()*1000)+1);
 				json += ',"type": "praca-lub-nauka","slug": "praca-lub-nauka-23","place_LL": "POINT (';
-				json += parseFloat(wkt.components[0].y)+(Math.random()/100*Math.floor((Math.random()*2)-1));
-				json += ' ';
 				json += parseFloat(wkt.components[0].x)+(Math.random()/100*Math.floor((Math.random()*2)-1));
+				json += ' ';
+				json += parseFloat(wkt.components[0].y)+(Math.random()/100*Math.floor((Math.random()*2)-1));
 				json += ')","feature": 24,"datasetdef": {"id": 6,"name": "AAA","icon":""},"favorite": "'+Math.floor((Math.random()*1000)+1);
 				json += '"}';	
 			}
@@ -66,7 +66,7 @@ function fakefindByNameObjects(args)
 			var wkt = new Wkt.Wkt();			
 			wkt.read(args.data["polygon"]);			
 			
-			var json = '[';			
+			var json = '{"success":"true","objects":[';			
 			
 			json += '{"id":'+Math.floor((Math.random()*1000)+1);
 			json += ',"type": "praca-lub-nauka","slug": "praca-lub-nauka-23","place_LL": "POINT (';
@@ -101,7 +101,7 @@ function fakefindByNameObjects(args)
 				json += '"}';	
 			}
 			
-			json += ']';
+			json += ']}';
 
 			json = jQuery.parseJSON(json);
 			
@@ -137,7 +137,7 @@ var WebService = (function () {
 	{				
 		jQuery.ajax(
 			{
-				dataType: "json",
+				dataType: "jsonp",
 				type: 'GET',
 				async: false,
 				url:url_string,
@@ -162,7 +162,7 @@ var WebService = (function () {
 			var result = false;
 		
 			request_get(apiUrl.near_objects,
-				{polygon:'POINT ('+latitude+' '+longitude+')'},
+				{polygon:'POINT ('+longitude+' '+latitude+')'},
 				function(data,mb)
 				{					
 					//if(data.success)
@@ -310,8 +310,8 @@ var WebService = (function () {
 				{name:sSearchText},
 				function(data,mb)
 				{					
-					//if(data.success)
-					//{
+					if(data.success)
+					{
 						var nearObjects = new Array();
 	
 						var iCounter = 0;
@@ -343,7 +343,7 @@ var WebService = (function () {
 						result = nearObjects;
 					//}else{
 					//	alert(data.error_message);
-					//}			
+					}			
 				}
 			);
 			

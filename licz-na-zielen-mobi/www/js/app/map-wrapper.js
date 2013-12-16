@@ -11,12 +11,10 @@ var MapWrapper = (function () {
         
 		function onLocationFound(e) {
 			locationCallback(e.latlng.lat,e.latlng.lng);
-			//locationCallback(52.399, 16.900);
 		}
 
 		function onLocationError(e) {
-			alert(e.message);
-			//locationCallback(52.399, 16.900);
+			alert('Wystąpił problem z lokalizacją, uruchom aplikację jeszcze raz, problem może się powtórzyć.');
 		}
 		
 		var aMarkerList = new Array();
@@ -150,6 +148,19 @@ var MapWrapper = (function () {
 			}
 		};
 		
+		this.getMapPixel = function (layer) {
+		
+			var iHeight = $('#'+div_tag).height();
+			var iWidht = $('#'+div_tag).width();
+			var bounds = map.getBounds();
+			
+			iWidht = map.getSize().x/(bounds.getEast()-bounds.getWest());
+			iHeight = map.getSize().y/(bounds.getNorth()-bounds.getSouth());
+			
+			return [iWidht,iHeight];
+			
+		};
+		
 		this.removeMarkers = function (layer) {
 		
 			if(!aMarkerList.hasOwnProperty(layer))
@@ -185,9 +196,15 @@ var MapWrapper = (function () {
 		
 		this.setCenter = function (latitude, longitude,zoom) {
 		
-			map.setView([latitude, longitude], 20);	
+			map.setView([latitude, longitude], map.getZoom());	
 			center[0] = latitude;
 			center[1] = longitude;
+			
+        };
+		
+		this.moveTo = function (latitude, longitude) {		
+		
+			map.setView([latitude, longitude],map.getZoom());
 			
         };
 				

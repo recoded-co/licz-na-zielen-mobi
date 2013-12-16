@@ -250,14 +250,7 @@ button
 	outline:none;
 	font-size:17px;
 	z-index:3000;
-}
-
-
-#menu-item-14 > input::-webkit-input-placeholder {
-  color: #fff;
-}
-#menu-item-14 > input:-moz-placeholder {
-  color: #fff;
+	color:#fff;
 }
 
 
@@ -402,7 +395,6 @@ button
 {
 	padding:0 10px;
 	background:#f6fce3;
-	min-height:30px;
 }
 
 .divide
@@ -574,9 +566,10 @@ button
 {
 	float:right;
 	color:#fff;
-	padding:0px 4px;
+	padding-right:5px;
 	background-color:#53cbf5;
 	margin-left:5px;
+	vertical-align:middle;
 }
 
 .obj-dist-span

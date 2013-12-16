@@ -8,8 +8,8 @@
 var map;
 var webapi;
 var debug;
-var cachedNearObjects;
-var cachedFindObjects = new Array();;
+var cachedNearObjects = new Array();
+var cachedFindObjects = new Array();
 
 //requirejs(['jquery','leaflet','app/android','Google'],
 //function   ($,lf,mb,gg) {
@@ -49,8 +49,7 @@ jQuery(document).ready(function(){
 	}
 	
 	//Show/Hide menu TODO
-	jQuery('#menu-btn').click(showMenu);
-	
+	jQuery('#menu-btn').click(showMenu);	
 	
 	jQuery('#menu-page > div > div:first-child').click(showMenu);
 	
@@ -293,6 +292,12 @@ function showSerachObjectOnMap(simpleObject)
 	webapi.getDetails(simpleObject);
 	map.addMarker('near',map.MARKER_AQUA2,simpleObject.getLatitude(),simpleObject.getLongitude(),
 			'<b>'+simpleObject.getName()+'</b>',false,showObjectDetalis,simpleObject);
+	map.moveTo(simpleObject.getLatitude(),simpleObject.getLongitude());
+	
+	
+	
+	if(cachedNearObjects[simpleObject.getGUID()] === undefined)
+		cachedNearObjects[simpleObject.getGUID()] = simpleObject;
 }
 
 function showObjectOnList(simpleObject,color,dist)
@@ -312,7 +317,7 @@ function showObjectOnList(simpleObject,color,dist)
 	var oObjIcons = oObject.find('.obj-icons');
 	
 	simpleObject.enumIcons(function(ico){
-		oObjIcons.append('<div>*'+ico+'</div>');
+		oObjIcons.append('<div><img src="images/tag_ico.png" />'+ico+'</div>');
 	});
 	
 	jQuery('#near-continer').append(oObject);
@@ -352,12 +357,30 @@ function showObjectDetalis(simpleObject,e)
 	oObjIcons.empty();
 	
 	simpleObject.enumIcons(function(ico){
-		oObjIcons.append('<div>*'+ico+'</div>');
+		oObjIcons.append('<div><img src="images/tag_ico.png" />'+ico+'</div>');
 	});
 	
 	jQuery('#fav-obj-dlg').find('span').text(simpleObject.getGUID());
-	
+		
 	oObjectDlg.show();
+	
+	
+	//Center marker in small map
+	var iMapPixel = map.getMapPixel();
+	
+	var iFullMapHeight = $('#map').height();
+	
+	var iDlgHeight = oObjectDlg.children().eq(0).height();
+	
+	var iSmallMapHeight = iFullMapHeight - iDlgHeight ;
+	
+	var iToMove = iDlgHeight-iFullMapHeight/2 + iSmallMapHeight/2;
+	
+	iToMove /= iMapPixel[1];
+	
+	map.moveTo(simpleObject.getLatitude()-iToMove,simpleObject.getLongitude());
+		
+	
 	
 	changeSearchBar(simpleObject.getName(),false);
 	
@@ -411,7 +434,6 @@ function searchNearObjects()
 	
 	near_btn.addClass('image-animation');
 	
-	setTimeout(function () {
 	
 	var centerPoint = map.getCenterOfMap();		
 		
@@ -456,10 +478,8 @@ function searchNearObjects()
 		alert('errorek');
 	}
 	
-	near_btn.removeClass('image-animation');
+	near_btn.removeClass('image-animation');	
 	
-	
-	},3000);
 	
 }
 
