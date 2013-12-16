@@ -3,8 +3,8 @@
 Android
 
 */
-
-var MobileDevice = (function () {
+/*
+var DebugMop = (function () {
 
     var cls = function () {
         
@@ -15,4 +15,4 @@ var MobileDevice = (function () {
     };    
 
     return cls;
-})();
+})();*/

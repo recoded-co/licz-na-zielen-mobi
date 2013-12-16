@@ -8,15 +8,13 @@ Android
 var PleaceObject = (function () {
 	
 	//constructor
-    var cls = function (isNew) {
-        
+    var cls = function (isNew) {        
 		
 		var  objData = new Object(); 
 		
-		objData.sName = 'AAA';
+		objData.sName = 'Unkown';
 		objData.dLatitude = '';
-		objData.dLongitude = '';
-		objData.iFavorite = 0;
+		objData.dLongitude = '';		
 		objData.oId = '';
 		objData.aQuestAns = new Array();
 		objData.aIcons = new Array();
@@ -24,6 +22,7 @@ var PleaceObject = (function () {
 		
 		var iDistance = 0;
 		var bCache = isNew;
+		var iFavorite = false;
 		
 		objData.toJSON = function(key)
 		 {
@@ -52,7 +51,7 @@ var PleaceObject = (function () {
         };
 		
 		this.setName = function (name) {			
-			//objData.sName = name;			
+			objData.sName = name;			
         };
 		
 		this.setLatitude = function (lat) {			
@@ -64,11 +63,11 @@ var PleaceObject = (function () {
         };
 		
 		this.getFavorite = function () {			
-			return objData.iFavorite;			
+			return iFavorite;			
         };
 		
 		this.setFavorite = function (fav) {			
-			objData.iFavorite = fav;			
+			iFavorite = fav;			
         };
 		
 		this.getId = function () {			
@@ -85,6 +84,14 @@ var PleaceObject = (function () {
 		
 		this.getData = function () {			
 			return JSON.stringify(objData)
+        };
+		
+		this.cloneObject = function () {	
+
+			var newObject = new PleaceObject(true);
+			newObject.setData(this.getData());		
+			return newObject;
+			
         };
 		
 		this.setData = function (sText) {	

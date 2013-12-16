@@ -51,7 +51,7 @@ body {
 }
 
 a:focus {
-  outline: thin dotted;
+  
 }
 
 a:active,
@@ -335,9 +335,7 @@ a:focus {
 }
 
 a:focus {
-  outline: thin dotted #333;
-  outline: 5px auto -webkit-focus-ring-color;
-  outline-offset: -2px;
+ 
 }
 
 img {
@@ -3807,13 +3805,13 @@ textarea.input-group-sm > .input-group-btn > .btn {
 .nav > li > a {
   position: relative;
   display: block;
-  padding: 10px 15px;
+  padding: 0px 15px;
+  width:50px;
 }
 
 .nav > li > a:hover,
 .nav > li > a:focus {
   text-decoration: none;
-  background-color: #eeeeee;
 }
 
 .nav > li.disabled > a {

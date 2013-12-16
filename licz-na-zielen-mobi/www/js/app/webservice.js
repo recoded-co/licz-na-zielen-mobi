@@ -4,38 +4,37 @@ Android
 
 */
 
+var debug = true;
+
 function fakeApiNearObjects(args)
 {
 	try
 		{
-			
 			var wkt = new Wkt.Wkt();			
 			wkt.read(args.data["polygon"]);			
 			
-			//var json = '{"success":"true","hits":1,"objects":[{"id": 1060,"type": "praca-lub-nauka","slug": "praca-lub-nauka-23","geometry": "POINT (1885969.0171316999476403 6884584.6045808997005224)","feature": 24,"datasetdef": {"id": 6,"name": "AAA","icon":""},"favorite": "9"}]}';
-			
-			var json = '{"success":"true","hits":1,"objects":[';			
+			var json = '[';			
 			
 			json += '{"id":'+Math.floor((Math.random()*1000)+1);
-			json += ',"type": "praca-lub-nauka","slug": "praca-lub-nauka-23","geometry": "POINT (';
-			json += parseFloat(wkt.components[0].x)+Math.random()/100;
-			json += ' ';
+			json += ',"type": "praca-lub-nauka","slug": "praca-lub-nauka-23","place_LL": "POINT (';
 			json += parseFloat(wkt.components[0].y)+Math.random()/100;
+			json += ' ';
+			json += parseFloat(wkt.components[0].x)+Math.random()/100;
 			json += ')","feature": 24,"datasetdef": {"id": 6,"name": "AAA","icon":""},"favorite": "'+Math.floor((Math.random()*1000)+1);
 			json += '"}';			
 			
 			for(var i=0;i<9;i++)
 			{						
 				json += ',{"id":'+Math.floor((Math.random()*1000)+1);
-				json += ',"type": "praca-lub-nauka","slug": "praca-lub-nauka-23","geometry": "POINT (';
-				json += parseFloat(wkt.components[0].x)+(Math.random()/100*Math.floor((Math.random()*2)-1));
-				json += ' ';
+				json += ',"type": "praca-lub-nauka","slug": "praca-lub-nauka-23","place_LL": "POINT (';
 				json += parseFloat(wkt.components[0].y)+(Math.random()/100*Math.floor((Math.random()*2)-1));
+				json += ' ';
+				json += parseFloat(wkt.components[0].x)+(Math.random()/100*Math.floor((Math.random()*2)-1));
 				json += ')","feature": 24,"datasetdef": {"id": 6,"name": "AAA","icon":""},"favorite": "'+Math.floor((Math.random()*1000)+1);
 				json += '"}';	
 			}
 			
-			json += ']}';
+			json += ']';
 
 			json = jQuery.parseJSON(json);
 			
@@ -60,6 +59,60 @@ function fakeApiSearchObjects(args)
 	}
 }
 
+function fakefindByNameObjects(args)
+{		
+	try
+		{
+			var wkt = new Wkt.Wkt();			
+			wkt.read(args.data["polygon"]);			
+			
+			var json = '[';			
+			
+			json += '{"id":'+Math.floor((Math.random()*1000)+1);
+			json += ',"type": "praca-lub-nauka","slug": "praca-lub-nauka-23","place_LL": "POINT (';
+			json += parseFloat(wkt.components[0].y)+Math.random()/100;
+			json += ' ';
+			json += parseFloat(wkt.components[0].x)+Math.random()/100;
+			json += ')","feature": 24,"datasetdef": {"id": 6,"name": "'+args.data['name'];
+			
+			var lo = Math.floor(Math.random()*5);
+			
+			for(var j=0;j<lo;j++)
+			json += String.fromCharCode(65+Math.floor((Math.random()*20)+1));
+			
+			json += '","icon":""},"favorite": "'+Math.floor((Math.random()*1000)+1);
+			json += '"}';			
+			
+			for(var i=0;i<9;i++)
+			{						
+				json += ',{"id":'+Math.floor((Math.random()*1000)+1);
+				json += ',"type": "praca-lub-nauka","slug": "praca-lub-nauka-23","place_LL": "POINT (';
+				json += parseFloat(wkt.components[0].y)+(Math.random()/100*Math.floor((Math.random()*2)-1));
+				json += ' ';
+				json += parseFloat(wkt.components[0].x)+(Math.random()/100*Math.floor((Math.random()*2)-1));
+				json += ')","feature": 24,"datasetdef": {"id": 6,"name": "'+args.data['name'];
+			
+				var lo = Math.floor(Math.random()*5);
+				
+				for(var j=0;j<lo;j++)
+				json += String.fromCharCode(65+Math.floor((Math.random()*20)+1));
+			
+				json += '","icon":""},"favorite": "'+Math.floor((Math.random()*1000)+1);
+				json += '"}';	
+			}
+			
+			json += ']';
+
+			json = jQuery.parseJSON(json);
+			
+			args.success(json);	
+	
+		}catch(e)
+		{
+			alert(e.message );
+		}	
+}
+
 var apiUrl =
 {
   near_objects: 'http://alfa.licznazielen.pl/geocache/search/geo/',
@@ -69,27 +122,26 @@ var apiUrl =
 
 function jQuery_ajax(args)
 {
-	if(args.url==apiUrl.near_objects)
+	if(args.url.search(apiUrl.near_objects)>-1)
 		fakeApiNearObjects(args);
-	else if(args.url.search(apiUrl.search_objects))
+	else if(args.url.search(apiUrl.details_object)>-1)
 		fakeApiSearchObjects(args);
 	else
-		args.success('');
+		fakefindByNameObjects(args);
 }
 
 
 var WebService = (function () {
 		
 	function request_get(url_string,extra_data,success_callback)
-	{		
-		
+	{				
 		jQuery.ajax(
 			{
 				dataType: "json",
 				type: 'GET',
 				async: false,
 				url:url_string,
-				//data:extra_data,
+				data:extra_data,
 				success:function(data)
 				{
 					success_callback(data,true);
@@ -98,7 +150,7 @@ var WebService = (function () {
 					success_callback(xhr.responseText,false);
 				}
 			}
-		);		
+		);	
 		
 	}
 
@@ -109,7 +161,7 @@ var WebService = (function () {
 				
 			var result = false;
 		
-			request_get(apiUrl.near_objects+'?polygon=POINT+('+latitude+'+'+longitude+')/',
+			request_get(apiUrl.near_objects,
 				{polygon:'POINT ('+latitude+' '+longitude+')'},
 				function(data,mb)
 				{					
@@ -117,28 +169,14 @@ var WebService = (function () {
 					//{
 						var nearObjects = new Array();
 	
-						var iCounter = 0;
+						var iCounter = 0;						
 						
-						//alert(data.length);
-						
-						//jQuery.each(data, function( key, val ) {
-						
-						for(var i=0;i<data.length;i++)
-						{
-							var val = data[i];
-							
-							
-							if(typeof val === 'undefined')
-							{
-							}else
-							{
-							
-							
+						jQuery.each(data, function( key, val ) {
 							
 							var singleObject = new PleaceObject(true);
 							
 							singleObject.setId(new Array(val.id,val.feature,val.slug,val.datasetdef.id));
-							singleObject.setName(val.name);
+							singleObject.setName(val.datasetdef.name);
 							singleObject.setFavorite(val.favorite);
 							
 							wkt = new Wkt.Wkt();					
@@ -152,8 +190,8 @@ var WebService = (function () {
 							singleObject.addIcon('muzeum');
 							
 							nearObjects[iCounter++] = singleObject;
-							}
-						}
+							
+						});
 						
 						result = nearObjects;
 					//}else{
@@ -166,12 +204,12 @@ var WebService = (function () {
 			
         };
 		
-		this.getDetails = function (singleObject) {
-
+		this.getDetails = function (singleObject) {		
+		
 			var result = false;
 		
 			var aId = singleObject.getId();
-					
+			
 			request_get(apiUrl.details_object+aId[1]+'/'+aId[3]+'/'+aId[2],
 				{feature:aId[1],datasetdef_id:aId[3],slug:aId[2]},
 				function(data,mb)
@@ -182,7 +220,7 @@ var WebService = (function () {
 						
 						jQuery.each(data.object.raw_properties, function( key, val ) {
 							singleObject.addQuestionAnswer(val.key,val.value);
-						});						
+						});
 						
 						//TODO
 						singleObject.setPopularity(3);
@@ -263,9 +301,53 @@ var WebService = (function () {
 			return favObjects;			
 		};
 		
-		this.getSearchObjects = function (sSearchText) {
-			//TODO
-			return false;			
+		this.getSearchObjects = function (sSearchText,callback,data1,data2) {
+			
+			var result = false;
+		
+			request_get(apiUrl.search_objects+sSearchText,
+				//{polygon:'POINT ('+data1+' '+data2+')',name:sSearchText},
+				{name:sSearchText},
+				function(data,mb)
+				{					
+					//if(data.success)
+					//{
+						var nearObjects = new Array();
+	
+						var iCounter = 0;
+						
+						jQuery.each(data.objects, function( key, val ) {
+							
+							var singleObject = new PleaceObject(true);
+							
+							singleObject.setId(new Array(val.id,val.feature,val.slug,val.datasetdef.id));
+							singleObject.setName(val.datasetdef.name);
+							singleObject.setFavorite(val.favorite);
+							
+							var wkt = new Wkt.Wkt();					
+							wkt.read(val.place_LL);
+							
+							singleObject.setLatitude(wkt.components[0].y);
+							singleObject.setLongitude(wkt.components[0].x);
+							
+							//TODO
+							//singleObject.addIcon('rower');
+							singleObject.addIcon('muzeum');
+							
+							nearObjects[iCounter++] = singleObject;
+							
+						});
+						
+						callback(nearObjects);
+						
+						result = nearObjects;
+					//}else{
+					//	alert(data.error_message);
+					//}			
+				}
+			);
+			
+			return result;		
         };
 		
 		

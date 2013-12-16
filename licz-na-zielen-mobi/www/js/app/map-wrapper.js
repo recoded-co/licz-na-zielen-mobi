@@ -32,13 +32,14 @@ var MapWrapper = (function () {
 		map.on('locationfound', onLocationFound);
 		map.on('locationerror', onLocationError);
 		map.locate({setView: true, maxZoom: 16});
+				
+		var ggl = false;
 		
 		try
 		{
-			var ggl = new L.Google();
-			map.addControl(new L.Control.Layers( {'OSM':osm, 'Google':ggl}, {}));
+			ggl = new L.Google();			
 		}catch(err){
-			alert('Error: '+err.message);
+			
 		}
 		
 		//Init center of map
@@ -59,6 +60,7 @@ var MapWrapper = (function () {
 		this.MARKER_BROWN = 'brown';
 		this.MARKER_ORANGE = 'orange';
 		this.MARKER_GREEN = 'green';
+		this.MARKER_AQUA2 = 'aqua2';
 		
 		var markers = new Array();
 		
@@ -67,9 +69,9 @@ var MapWrapper = (function () {
 				shadowUrl: 'images/marker-shadow.png',
 				iconSize:     [25, 41],
 				shadowSize:   [41, 41],
-				iconAnchor:   [0, 0],
-				shadowAnchor: [0, 0],
-				popupAnchor:  [12, 0]
+				iconAnchor:   [12, 40],
+				shadowAnchor: [12, 40],
+				popupAnchor:  [-1, -40]
 			}
 		});
 		
@@ -85,6 +87,19 @@ var MapWrapper = (function () {
 		markers[this.MARKER_BROWN] = new LeafIcon({iconUrl: 'images/m10.png'});
 		markers[this.MARKER_ORANGE] = new LeafIcon({iconUrl: 'images/current_location.png'});
 		markers[this.MARKER_GREEN] = new LeafIcon({iconUrl: 'images/fav.png'});
+		markers[this.MARKER_AQUA2] = new LeafIcon({iconUrl: 'images/search.png'});
+		
+		this.showSateliteView = function (show) {
+			if(show && ggl)			
+			{
+				map.removeLayer(osm); 
+				map.addLayer(ggl);
+			}else{				
+				map.removeLayer(ggl); 
+				map.addLayer(osm);
+			}
+		
+		};
 		
 		this.fitZoom = function (layer,number,centerPoint) {
 		
@@ -150,7 +165,7 @@ var MapWrapper = (function () {
 			aMarkerList[layer] = new Array();
 			
 		};
-				
+		
 		this.addMarker = function (layer,type,latitude, longitude,text,show,callback,data) {
 		
 			var mark = L.marker([latitude, longitude],{icon: markers[type]}).addTo(map).bindPopup(text);
@@ -167,13 +182,23 @@ var MapWrapper = (function () {
 			
 			aMarkerList[layer].push(mark);
         };
-				
+		
 		this.setCenter = function (latitude, longitude,zoom) {
 		
 			map.setView([latitude, longitude], 20);	
 			center[0] = latitude;
 			center[1] = longitude;
 			
+        };
+				
+		this.getDistanceFromCenter = function (latitude, longitude) {		
+			var distance = centerPoint.distanceTo([latitude, longitude]);			
+			return parseFloat(distance/1000.0).toFixed(2);		
+        };
+				
+		this.getDistanceFromCenterOfMap = function (latitude, longitude) {		
+			var distance = map.getCenter().distanceTo([latitude, longitude]);		
+			return parseFloat(distance/1000.0).toFixed(2);			
         };
 		
 		this.goToCenter = function () {		
