@@ -10,11 +10,12 @@ var MapWrapper = (function () {
     var cls = function (div_tag,locationCallback) {
         
 		function onLocationFound(e) {
-			locationCallback(e.latlng.lat,e.latlng.lng);
+			locationCallback(e.latlng.lat,e.latlng.lng,true);
 		}
 
 		function onLocationError(e) {
-			alert('Wystąpił problem z lokalizacją, uruchom aplikację jeszcze raz, problem może się powtórzyć.');
+			alert('Ups, mamy problem z określeniem twojej lokalizacji. Zostaniesz przeniesiony do ostatniej znanej nam lokalizacji.');
+			locationCallback(52.399, 16.900,false);
 		}
 		
 		var aMarkerList = new Array();
@@ -196,11 +197,15 @@ var MapWrapper = (function () {
 		
 		this.setCenter = function (latitude, longitude,zoom) {
 		
-			map.setView([latitude, longitude], map.getZoom());	
+			map.setView([latitude, longitude], zoom);	
 			center[0] = latitude;
 			center[1] = longitude;
 			
         };
+		
+		this.getInfo = function () {		
+			return  map.getZoom();
+		};
 		
 		this.moveTo = function (latitude, longitude) {		
 		

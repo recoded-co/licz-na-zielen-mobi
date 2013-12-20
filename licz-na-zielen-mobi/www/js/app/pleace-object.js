@@ -79,7 +79,7 @@ var PleaceObject = (function () {
         };	
 		
 		this.getGUID = function (id) {			
-			return objData.oId[0];			
+			return objData.oId;			
         };
 		
 		this.getData = function () {			
