@@ -11,7 +11,7 @@ var debug;
 var cachedNearObjects = new Array();
 var cachedFindObjects = new Array();
 var markerColorList;
-
+var myAudio;
 
 //requirejs(['jquery','leaflet','app/android','Google'],
 //function   ($,lf,mb,gg) {
@@ -57,14 +57,13 @@ jQuery(document).ready(function(){
 	if(webapi.getSettings('fav')=='true')
 		showFavorite(true);
 	else{
-		$('#off-fav-btn').addClass('activ');
-		$('#on-fav-btn').removeClass('activ');
+		$('.icon-heart').addClass('deactiv');
 	}
 	
 	if(webapi.getSettings('sat')=='true'){
-		$('#on-sat-btn').addClass('activ');
-		$('#off-sat-btn').removeClass('activ');
 		map.showSateliteView(true);
+	}else{
+		$('.icon-globe').addClass('deactiv');
 	}
 	
 	//Show/Hide menu TODO
@@ -108,26 +107,35 @@ jQuery(document).ready(function(){
 		
 	jQuery('#on-fav-btn').click(function()
 	{	
-		$(this).addClass('activ');
-		$('#off-fav-btn').removeClass('activ');
-		showFavorite(true);
-		webapi.saveSettings('fav',true);
-	});
-	
-	jQuery('#off-fav-btn').click(function()
-	{	
-		$(this).addClass('activ');
-		$('#on-fav-btn').removeClass('activ');
-		showFavorite(false);
-		webapi.saveSettings('fav',false);
+		var iClass = $(this).children("i").eq(0);
+		var action = iClass.hasClass('deactiv');
+		
+		if(action)
+		{
+			iClass.removeClass('deactiv');
+		}else{
+			iClass.addClass('deactiv');
+		}
+		
+		showFavorite(action);
+		webapi.saveSettings('fav',action);
 	});
 	
 	jQuery('#on-sat-btn').click(function()
 	{	
-		$(this).addClass('activ');
-		$('#off-sat-btn').removeClass('activ');
-		map.showSateliteView(true);
-		webapi.saveSettings('sat',true);
+		var iClass = $(this).children("i").eq(0);
+		var action = iClass.hasClass('deactiv');
+		
+		if(action)
+		{
+			iClass.removeClass('deactiv');
+		}else{
+			iClass.addClass('deactiv');
+		}
+		
+		map.showSateliteView(action);
+		webapi.saveSettings('sat',action);
+		
 	});
 	
 	jQuery('#off-sat-btn').click(function()
@@ -194,11 +202,12 @@ jQuery(document).ready(function(){
 	
 	if (navigator.userAgent.toLowerCase().indexOf("android") > -1) {
 		bindTouch($('#face-obj-dlg'));
-		bindTouch($('#find-btn'));
+		//bindTouch($('#find-btn'));
 		bindTouch($('#fav-obj-dlg'));
 		bindTouch($('#hide-near-dlg'));
 		bindTouch($('#search-near-dlg'));
 		bindTouch($('.leaflet-control-zoom > a'));
+		bindTouch($('.touch-action'));
 	}
 	
 	$('#close_app').click(function(){		
@@ -232,15 +241,15 @@ function showMenu()
 	
 	if(!$( "#menu-canvas" ).is(':visible'))
 	{
-		$( "#menu-canvas" ).fadeIn("slow");
+		$( "#menu-canvas" ).fadeIn("normal");
 		$('#menu-page').show();
 		$('#menu-page').css("left","100%");
-		$( "#menu-page" ).animate({ "left": "0%" }, "slow" );
+		$( "#menu-page" ).animate({ "left": "0%" }, "normal" );
 	}else{	
-		$( "#menu-page" ).animate({ "left": "100%" }, "slow",function(){
+		$( "#menu-page" ).animate({ "left": "100%" }, "normal",function(){
 			$('#menu-page').hide();
 		} );
-		$( "#menu-canvas" ).fadeOut( "slow" );
+		$( "#menu-canvas" ).fadeOut( "normal" );
 	}
 }
 
@@ -359,6 +368,8 @@ function showObjectDetalis(simpleObject,e)
 	
 	oObjectDlg.find('.obj-name').text(simpleObject.getName());
 	
+	oObjectDlg.find('.obj-url').attr('href',simpleObject.getUrl());
+	
 	if(!simpleObject.setFavorite(true))
 		oObjectDlg.find('.obj-dist').text(simpleObject.getDistance());
 	else
@@ -375,10 +386,10 @@ function showObjectDetalis(simpleObject,e)
 	oObjStars.empty();
 	
 	for(var i = 0;i<simpleObject.getPopularity();i++)
-		oObjStars.append('<img src="images/yellow_star_ico.png" />');
+		oObjStars.append('<i class=" icon-star"></i>');
 	
 	for(var i = simpleObject.getPopularity();i<5;i++)
-		oObjStars.append('<img src="images/grey_star_ico.png" />');
+		oObjStars.append('<i class=" icon-star-empty"></i>');
 		
 	var oObjIcons = oObjectDlg.find('.obj-icons');
 	oObjIcons.empty();
@@ -474,14 +485,17 @@ function searchNearObjectsCallback(nearObjects)
 			
 			
 		});
-		
+			
 		
 		var centerPoint = map.getCenterOfMap();	
 		map.fitZoom('near',5,centerPoint);
-		jQuery('#near-object-list').show();	
-		$('#find-near-btn').removeClass('image-animation');
+		jQuery('#near-object-list').show();
+		//myAudio.pause();
+	}else{
+		showFlashMessage('nie znalazłem obiektów');
 	}
 	
+	$('#find-near-btn').removeClass('image-animation');
 	
 }
 
@@ -498,9 +512,12 @@ function searchNearObjects()
 	
 	iCounter = 0;
 	
-	
-	
 	near_btn.addClass('image-animation');
+	//$('#radar-sound').get(0).play();
+	
+	//myAudio = new Audio('sound/sonar.mp3'); 
+	//myAudio.loop = true;
+	//myAudio.play();
 	
 	
 	var centerPoint = map.getCenterOfMap();		
@@ -530,13 +547,13 @@ function InitApp(latitude,longitude,bSuccess)
 		
 		if(loc !== false)
 		{
-			map.addMarker('primary',map.MARKER_ORANGE,loc[0],loc[1],'Tu ostatnoio byłeś',true,function(){},'');
+			map.addMarker('primary',map.MARKER_ORANGE,loc[0],loc[1],'Tu ostatnio byłeś',true,function(){},'');
 			map.setCenter(loc[0],loc[1],16);
 		}else{
 			map.setCenter(51.97134580885172,18.599853515625,7);
 		}
 		
-				
+		
 	}
 	$('#splashscreen').hide();
 }

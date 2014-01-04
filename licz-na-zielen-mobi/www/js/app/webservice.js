@@ -13,7 +13,7 @@ var WebService = (function () {
 		
 	function request_get(url_string,extra_data,success_callback)
 	{				
-		//setTimeout(function(){		
+		//		
 			jQuery.ajax(
 				{
 					dataType: "jsonp",
@@ -56,6 +56,7 @@ var WebService = (function () {
 							singleObject.setId(val.id);
 							singleObject.setName(val.name);
 							singleObject.setFavorite(val.favorite);
+							singleObject.setUrl("http://google.pl");
 							
 							singleObject.setPopularity(val.popularity);
 							
@@ -87,38 +88,9 @@ var WebService = (function () {
 			
         };
 		
-		this.getDetails = function (singleObject,api_callback) {		
+		this.getDetails = function (singleObject,api_callback) {	
 		
-			api_callback(singleObject);
-		
-			/*var result = false;
-		
-			var aId = singleObject.getId();
-			
-			request_get(apiUrl.details_object+aId[1]+'/'+aId[3]+'/'+aId[2],
-				{feature:aId[1],datasetdef_id:aId[3],slug:aId[2]},
-				function(data,mb)
-				{					
-					if(data.success)
-					{
-						singleObject.clearQuestionsAnswers();
-						
-						jQuery.each(data.object.raw_properties, function( key, val ) {
-							singleObject.addQuestionAnswer(val.key,val.value);
-						});
-						
-						//TODO
-						singleObject.setPopularity(3);
-						
-						result = true;
-						api_callback(singleObject);
-					}else{
-						alert(data.error_message);
-					}			
-				}
-			);*/
-			
-			//return result;			
+			api_callback(singleObject);					
 		};
 		
 		this.saveLocation = function (latitude,longitude) {		

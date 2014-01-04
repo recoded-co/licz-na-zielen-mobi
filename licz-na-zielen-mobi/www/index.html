@@ -7,12 +7,12 @@
 	<link rel="stylesheet" href="css/app.css" />
     <link rel="stylesheet" href="css/leaflet.css" />
     <link href="css/bootstrap.css" rel="stylesheet" media="screen">
-	
+	<link href="css/fontello.css" rel="stylesheet" media="screen">
 	<script src="http://maps.google.com/maps/api/js?v=3&sensor=false"></script>
 	<script src="js/lib/leaflet.js"></script>
 	<script src="js/lib/Google.js"></script>
 	<script src="js/lib/jquery.js"></script>
-	<script src="js/app/webservice.js"></script>
+	<script src="js/app/webservice-debug.js"></script>
 	<script src="js/lib/wicket.js"></script>
 	<script src="js/app/map-wrapper.js"></script>
 	<script src="js/app/pleace-object.js"></script>
@@ -47,6 +47,11 @@
 </head>
 <body>
 
+	<audio id="radar-sound" controls class="hidden">
+	  <source src="sound/sonar.mp3" type="audio/mpeg">
+	</audio> 
+
+
 	<div id="splashscreen">
 		
 		<div id="ss-top">		
@@ -62,9 +67,9 @@
 	
     <div id="navigatin-bar" class="navbar navbar-fixed-top" role="navigation">
        <ul class="nav" id="menu-main-menu">
-	    <li class="menu-item" id="menu-item-15"><a href="#" id='find-btn'><img src="images/search_ico.png" /></a></li>
-		<li class="menu-item" id="menu-item-14"><span>&nbsp;</span><input type='text'  /></li>
-		<li class="menu-item" id="menu-item-13"><button id="menu-btn"><img src="images/menu_ico.png" /></li>
+	    <li class="menu-item" id="menu-item-15"><a href="#" class="touch-action" id='find-btn'><i class="icon-search icon-font"></i></a></li>
+		<li class="menu-item" id="menu-item-14"><span class="roboto-font">&nbsp;</span><input type='text'  /></li>
+		<li class="menu-item" id="menu-item-13"><button class="touch-action" id="menu-btn"><i class="icon-menu icon-font"></i></li>
 	   </ul>
     </div>
 
@@ -84,7 +89,7 @@
 	</div>
 		
 	<div id="about-dlg">
-		<div>O projekcie<button id='close-about-dlg'><img src="images/close_profile_ico.png" /></button></div>
+		<div class="roboto-font">O projekcie<button id='close-about-dlg' class="touch-action"><i class="icon-cancel icon-font"></i></button></div>
 		Czekamy na treść z Fundacji
 	</div>	
 		
@@ -94,14 +99,14 @@
 	
 	<div id="menu-page">
 		<div>
-			<div>MENU<a href="#"><img src="images/close_profile_ico.png" /></a></div>
-			<div><img src="images/fav_menu_ico.png" /> Moje lokalizacje <button id='off-fav-btn'>Wył</button><button id='on-fav-btn' class='activ'>Wł</button></div>
-			<div><img src="images/map_view_menu_ico.png" /> Widok satelitarny <button id='off-sat-btn' class='activ'>Wył</button><button id='on-sat-btn'>Wł</button></div>
-			<div id='project-info-btn'><img src="images/project_info_menu_ico.png" /> Informacje o projekcie</div>
-			<div>
+			<div class="roboto-font">MENU<a href="#"><i class="icon-cancel icon-font"></i></a></div>
+			<div id="on-fav-btn" class="touch-action"><i class="icon-heart"></i>Moje lokalizacje</div>
+			<div id="on-sat-btn" class="touch-action"><i class="icon-globe"></i>Widok satelitarny</div>
+			<div id='project-info-btn' class="touch-action"><i class="icon-lightbulb"></i>Informacje o projekcie</div>
+			<div class="touch-action">
 				<a id='close_app' href="http://www.closeapp.pl">
 					<div>
-						<img src="images/close_app_menu_ico.png" /> Zamknij aplikacje
+						<i class="icon-off"></i> Zamknij aplikacje
 					</div>
 				</a>
 			</div>
@@ -112,7 +117,7 @@
 		
 		<div>
 			<div id='object-title-bar' class="divide">
-				<div class="obj-name"></div>
+				<div class="obj-name roboto-font"></div>
 				<div class="obj-stars"></div>
 			</div>
 			<div id='object-info' class="shrink divide">
@@ -123,23 +128,25 @@
 				&nbsp;
 			</div>
 			<div class='object-dialog-buttons shrink'>
-				<button id='face-obj-dlg'><img src="images/facebook_share_ico.png" /></button>
-				<button id='close-obj-dlg'><img src="images/close_profile_ico.png" /></button>
-				<button id='fav-obj-dlg'><span class="hidden"></span><img src="images/fav_profile_ico.png" /></button>
+				<a id='face-obj-dlg' class="obj-url"><i class="icon-share-1"></i></a>
+				<button id='close-obj-dlg' class="touch-action"><i class="icon-cancel"></i></button>
+				<button id='fav-obj-dlg'><span class="hidden"></span><i class="icon-heart"></i></button>
 			</div>
 		</div>
 	</div>
 	
 	<div id='near-object-list'>
-		<div class='hidden template'>
+		<div class='hidden template touch-action'>
 			<div class="obj-color">&nbsp;</div>
 			<div>
-				<div class='obj-filler'>
-					<div class="obj-name"></div>
-					<div><span class="obj-fav"></span> <img src="images/fav_list_ico.png" /></div>
+				<div class='obj-filler-smp'>
+					<div class="obj-name roboto-font"></div>					
 				</div>
 				<div class='obj-filler'>
 					<div class="obj-dist-span">Do celu <span class="obj-dist"></span> km</div>
+					<div><span class="obj-fav"></span> <img src="images/fav_list_ico.png" /></div>
+				</div>
+				<div class='obj-filler-smp'>					
 					<div class="obj-icons"></div>
 				</div>
 			</div>
@@ -147,8 +154,8 @@
 		<div id='near-continer'>
 		</div>
 		<div class='near-dialog-buttons'>
-			<button id='search-near-dlg'><img src="images/radar_list_ico.png" /></button>
-			<button id='hide-near-dlg'><img src="images/close_list_ico.png" /></button>
+			<button id='search-near-dlg'><i class="icon-bullseye icon-large-font"></i></button>
+			<button id='hide-near-dlg'><i class=" icon-angle-down icon-large-font"></i></button>
 		</div>
 	</div>
 	

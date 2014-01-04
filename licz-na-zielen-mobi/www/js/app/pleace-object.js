@@ -19,6 +19,7 @@ var PleaceObject = (function () {
 		objData.aQuestAns = new Array();
 		objData.aIcons = new Array();
 		objData.iPopularity = 0;
+		objData.sUrl = '';
 		
 		var iDistance = 0;
 		var bCache = isNew;
@@ -111,6 +112,14 @@ var PleaceObject = (function () {
 		
 		this.setDistance = function (dist) {	
 			iDistance = dist;
+        };		
+		
+		this.getUrl = function () {			
+			return objData.sUrl;
+        };
+		
+		this.setUrl = function (url) {	
+			objData.sUrl = url;
         };		
 		
 		this.getPopularity = function () {			
