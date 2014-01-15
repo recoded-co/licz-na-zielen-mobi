@@ -17,6 +17,50 @@ padding:0;
     font-weight: normal;
 }
 
+#obj-add-comment-title
+{
+	font-size:18px;
+	padding-top:15px;
+}
+
+#obj-add-comment > form > *
+{
+	padding: 4px 0px;
+}
+
+#obj-add-comment input[type="text"], 
+#obj-add-comment textarea
+{
+	border:2px solid #8fbe00;
+	width:100%;
+	color:#546914;	
+	padding: 10px 8px;
+}
+
+#obj-add-comment input[type="text"].error, 
+#obj-add-comment textarea.error
+{
+	border:2px solid #FF0000;
+}
+
+#obj-add-comment > form > div:last-child
+{
+	text-align:center;
+	padding-top:10px;
+}
+
+#send-comment-btn
+{
+	background-color: #8FBE00;
+    border: medium none;
+    color: #FFFFFF;
+    font-size: 18px;
+    line-height: 1;
+    margin: auto;
+    padding: 8px 44px;
+	margin-bottom:5px;
+}
+
 
 button:focus, input:focus
 {
@@ -62,7 +106,7 @@ button
 	display:none;
 	top:70px;
 	left:0;
-	position:absolute;
+	position:fixed;
 	padding:10px;
 	color:#fff;
 }
@@ -307,8 +351,8 @@ button
 
 #obj-quesans
 {
-	height:50%;
 	overflow-x:hidden;
+	max-height: 170px
 }
 
 
@@ -324,7 +368,7 @@ button
 
 #object-info > div:last-child
 {
-	padding:16px 0;
+	margin:12px 0;
 }
 
 .image-animation {    
@@ -402,9 +446,11 @@ button
 #object-dlg  div.shrink
 {
 	padding:0 10px;
-	background:#f6fce3;
-	font-size:24px;
+	background:#f6fce3;	
 }
+
+
+
 
 .icon-font
 {
@@ -489,9 +535,14 @@ button
 	padding: 4px 0;
 }
 
-.near-dialog-buttons,.object-dialog-buttons
+.near-dialog-buttons,.object-dialog-buttons,.obj-tab-buttons
 {
 	overflow:hidden;
+}
+
+.object-dialog-buttons
+{
+	font-size:24px;
 }
 
 #close-obj-dlg
@@ -504,13 +555,65 @@ button
 	background-color: #53CBF5;
 }
 
+#obj-tab-items 
+{
+	background: none repeat scroll 0 0 #F6FCE3;
+    padding: 15px 10px;
+}
+
+#obj-tab-items > div
+{
+	height:170px;
+}
+
+#obj-tab-items > div:last-child
+{
+	display:none;
+}
+
 .near-dialog-buttons > button,.object-dialog-buttons > button,.object-dialog-buttons > a
 {
 	float:left;
-	height:56px;
+	height:50px;
 	border:none;
 	outline:none;
 }
+
+.obj-tab-buttons> button
+{
+	float:left;
+	height:36px;
+	line-height:36px;
+	border:none;
+	outline:none;
+}
+
+.obj-tab-buttons> button
+{
+	background-color:#bee34e;
+	width:49.5%;
+}
+
+.obj-tab-buttons> button:first-child
+{
+	margin-right:0.5%
+}
+
+.obj-tab-buttons> button:last-child
+{
+	margin-left:0.5%
+}
+
+.obj-tab-buttons> button.btn-active
+{
+	background-color:#8fbe00;
+}
+
+.obj-tab-buttons> button.fake-active,#send-comment-btn.fake-active
+{
+	background-color:#53cbf5;
+}
+
 
 .near-dialog-buttons > button
 {
@@ -521,7 +624,7 @@ button
 {
 	width:33%;
 	text-align:center;
-	line-height:56px;	
+	line-height:50px;	
 }
 
 .object-dialog-buttons > a > img
@@ -606,7 +709,7 @@ button
 
 .obj-name
 {
-	font-size:18px;
+	font-size:17px;
 	color:#546914;
 	font-weight:bold;
 }
@@ -629,13 +732,14 @@ button
 .obj-stars > .icon-star,.obj-stars > .icon-star-empty
 {
 	color:orange;
-	font-size: 24px;
+	font-size: 22px;
 }
 
 .obj-icons
 {
-	overflow:hidden;
-	line-height:23px;
+	overflow-x:hidden;
+	overflow-y:scroll;
+	height:23px;
 	font-size: 14px;
 }
 
@@ -650,9 +754,10 @@ button
 	background-color: #53CBF5;
     color: #FFFFFF;
     float: right;
-    margin-bottom: 5px;
     margin-left: 5px;
-    padding-right: 5px;
+	margin-bottom: 5px;
+    padding:0px 5px;
+	line-height:23px;
     vertical-align: middle;
 }
 

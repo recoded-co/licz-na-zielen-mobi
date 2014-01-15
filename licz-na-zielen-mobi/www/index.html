@@ -16,6 +16,7 @@
 	<script src="js/lib/wicket.js"></script>
 	<script src="js/app/map-wrapper.js"></script>
 	<script src="js/app/pleace-object.js"></script>
+	<script src="js/lib/jquery.validate.js"></script>
 	<script src="js/app.js"></script>
 	
 	
@@ -123,9 +124,34 @@
 			<div id='object-info' class="shrink divide">
 				<div class="obj-dist-span">Do celu <span class="obj-dist"></span> km</div>
 				<div class="obj-icons">&nbsp;</div>
+			</div>			
+			<div class='obj-tab-buttons shrink'>
+				<button id="btn-obj-com" class="btn-active touch-action">komentarze</button>
+				<button id="btn-obj-add-com" class="touch-action">dodaj opinię</button>
 			</div>
-			<div id="obj-quesans" class="shrink">
-				&nbsp;
+			<div id="obj-tab-items">
+				<div id="obj-quesans">
+					&nbsp;
+				</div>
+				<div id="obj-add-comment">
+					<div>
+						<div id="error-continer" class="hidden">
+							<span>
+							</span>
+						</div>
+					</div>
+					<form>
+						<div>
+							<input id="comment-name" placeholder="podpis" name="nick" type="text" />
+						</div>
+						<div>
+							<textarea id="comment-message" placeholder="wiadomość" name="message"></textarea>
+						</div>
+						<div>
+							<button id="send-comment-btn" class="touch-action" type="submit" value="wyślij">wyślij</button>
+						</div>
+					</form>
+				</div>
 			</div>
 			<div class='object-dialog-buttons shrink'>
 				<a id='face-obj-dlg' class="obj-url"><i class="icon-share-1"></i></a>

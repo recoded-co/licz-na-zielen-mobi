@@ -15,7 +15,7 @@ function fakeApiNearObjects(args)
 			json += ' ';
 			json += parseFloat(wkt.components[0].y)+Math.random()/100;
 			json += ')","popularity": 4,"datasetdef": {"id": 6,"name": "AAA","icon":""},"favorite": "'+Math.floor((Math.random()*1000)+1);
-			json += '","icons":["muzeum","lotnisko","ble","skansen","wieloryb","hotel"],"comments":[]}';			
+			json += '","icons":["muzeum","lotnisko","ble","skansen","wieloryb","hotel"],"comments":[{"key":"jaka ladna pogoda","value":"w rzeczy samej"},{"key":"refelekcja","value":"w tym roku kartofle sa duze"},{"key":"lebie placki","value":"gorek kiszony"},{"key":"rzuczek zoldobrzerek","value":"owad"}]}';			
 			
 			for(var i=0;i<9;i++)
 			{						
@@ -25,7 +25,7 @@ function fakeApiNearObjects(args)
 				json += ' ';
 				json += parseFloat(wkt.components[0].y)+(Math.random()/100*Math.floor((Math.random()*2)-1));
 				json += ')","popularity": 4,"datasetdef": {"id": 6,"name": "AAA","icon":""},"favorite": "'+Math.floor((Math.random()*1000)+1);
-				json += '","icons":["muzeum","lotnisko","ble","skansen","wieloryb","hotel"],"comments":[]}';	
+				json += '","icons":["muzeum","lotnisko","ble","skansen","wieloryb","hotel"],"comments":[{"key":"jaka ladna pogoda","value":"w rzeczy samej"},{"key":"refelekcja","value":"w tym roku kartofle sa duze"},{"key":"lebie placki","value":"gorek kiszony"},{"key":"rzuczek zoldobrzerek","value":"owad"}]}';	
 			}
 			
 			json += ']}';
@@ -378,6 +378,10 @@ var WebService = (function () {
 			return result;		
         };
 		
+		this.addComment = function (sauthor,sMessage) {
+		
+		
+		};
 		
     };    
 

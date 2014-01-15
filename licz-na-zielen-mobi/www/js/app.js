@@ -215,6 +215,46 @@ jQuery(document).ready(function(){
 		webapi.saveLocation(centerPoint.lat,centerPoint.lng);
 	});
 	
+	jQuery('.obj-tab-buttons > button').click(function()
+	{	
+		
+		var obj = jQuery(this);
+		jQuery('.obj-tab-buttons > button').removeClass('btn-active');
+		obj.addClass('btn-active');
+		
+		jQuery('#obj-tab-items > div').hide();
+		jQuery('#obj-tab-items > div').eq(obj.index()).show();
+		
+	});
+	
+	var container = jQuery('#error-continer');
+	
+	jQuery('#obj-add-comment > form').validate({
+		errorContainer: container,
+		errorLabelContainer: jQuery("span", container),
+		wrapper: 'div',
+		submitHandler: function(form) 
+		{    
+			webapi.addComment(jQuery('#comment-name').val(),jQuery('#comment-message').val());
+			showFlashMessage('komentarz został dodany');	
+			jQuery('#comment-name').val('').prop("disabled",true);
+			jQuery('#comment-message').val('').prop("disabled",true);
+			jQuery('#send-comment-btn').prop("disabled",true);
+		},
+		rules: {                        
+			'nick': {required:true},
+			'message': {required:true}
+		},
+		messages: {
+			'nick': {
+				required:'Nick field is required.'
+			},
+			'first-name': {
+				required:'Message field is required.'
+			}
+		}                 
+    });	
+	
 });
 
 
@@ -417,8 +457,10 @@ function showObjectDetalis(simpleObject,e)
 	iToMove /= iMapPixel[1];
 	
 	map.moveTo(simpleObject.getLatitude()-iToMove,simpleObject.getLongitude());
-		
 	
+	jQuery('#comment-name').val('').prop("disabled",false);;
+	jQuery('#comment-message').val('').prop("disabled",false);;
+	jQuery('#send-comment-btn').prop('disabled', false);
 	
 	changeSearchBar(simpleObject.getName(),false);
 	

@@ -43,10 +43,11 @@ var WebService = (function () {
 				{polygon:'POINT ('+longitude+' '+latitude+')'},
 				function(data,mb)
 				{						
+					var nearObjects = new Array();
+					
 					if(data.success)
 					{
-						var nearObjects = new Array();
-	
+						
 						var iCounter = 0;						
 						
 						jQuery.each(data.objects, function( key, val ) {
@@ -56,7 +57,7 @@ var WebService = (function () {
 							singleObject.setId(val.id);
 							singleObject.setName(val.name);
 							singleObject.setFavorite(val.favorite);
-							singleObject.setUrl("http://google.pl");
+							singleObject.setUrl("licznazielen.pl");
 							
 							singleObject.setPopularity(val.popularity);
 							
@@ -78,10 +79,10 @@ var WebService = (function () {
 							
 						});
 						
-						api_callback(nearObjects);
-					}else{
-					//	alert(data.error_message);
-					}			
+					}
+					
+					api_callback(nearObjects);
+					
 				}
 			);	
 			
@@ -227,6 +228,11 @@ var WebService = (function () {
 			
 			return result;		
         };
+		
+		this.addComment = function (sauthor,sMessage) {
+		
+		
+		};
 		
 		
     };    
