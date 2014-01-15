@@ -4,9 +4,9 @@
 
 var apiUrl =
 {
-  near_objects: 'http://alfa.licznazielen.pl/geocache/search/geo/',
-  search_objects: 'http://alfa.licznazielen.pl/geocache/search/namehint/',
-  details_object: 'http://alfa.licznazielen.pl/geocache/search/object/'
+  near_objects: 'http://beta.licznazielen.pl/geocache/search/geo/',
+  search_objects: 'http://beta.licznazielen.pl/geocache/search/namehint/',
+  details_object: 'http://beta.licznazielen.pl/geocache/search/object/'
 }
 
 var WebService = (function () {
